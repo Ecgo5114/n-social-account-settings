@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { 
   Twitter, Linkedin, Instagram, AlertCircle, Edit2, MoreHorizontal, CheckCircle2, Plus,
@@ -9,20 +10,21 @@ import {
 } from 'lucide-react';
 import { useTheme } from './components/ThemeProvider';
 import type { Platform, SocialAccount, LayoutStyle } from './types/social-accounts';
-import { platformConfig } from './constants/platform-config';
+import { platformConfig, STANDARD_PLATFORMS, EXPANSION_PLATFORMS } from './constants/platform-config';
 import { useSocialAccounts } from './hooks/useSocialAccounts';
 import { useLayoutStyle } from './hooks/useLayoutStyle';
 import { usePlatformExpanded } from './hooks/usePlatformExpanded';
 import { NavItem } from './components/navigation/NavItem';
 import { GroupHeader } from './components/social-accounts/GroupHeader';
 import { AccountRow } from './components/social-accounts/AccountRow';
-import { LayoutStyleToggle } from './components/social-accounts/LayoutStyleToggle';
+import { LayoutStyleToggle, type DemoScenario, type ExtensibilityMode } from './components/social-accounts/LayoutStyleToggle';
 import { AddAccountModal } from './components/social-accounts/AddAccountModal';
 import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
 import { Toast } from './components/social-accounts/Toast';
 import { DisconnectConfirmationModal } from './components/social-accounts/DisconnectConfirmationModal';
 
 export default function SocialAccountsSettings() {
+  const [extensibilityMode, setExtensibilityMode] = useState<ExtensibilityMode>('standard');
   const { theme } = useTheme();
   
   // 使用自定義 Hooks 管理業務邏輯
@@ -37,9 +39,10 @@ export default function SocialAccountsSettings() {
     reconnectAccount,
     deleteAccount,
     setShowSwitchModal,
-  } = useSocialAccounts();
+  } = useSocialAccounts(extensibilityMode);
   
   const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
+  const [demoScenario, setDemoScenario] = useState<DemoScenario>('normal');
   const { platformExpanded, togglePlatformExpanded, expandPlatform } = usePlatformExpanded();
 
   // UI 狀態（不屬於業務邏輯的 UI 狀態）
@@ -82,17 +85,19 @@ export default function SocialAccountsSettings() {
     requestAnimationFrame(() => {
       accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-    setTimeout(() => setHighlightedAccountId(null), 4500);
+    setTimeout(() => setHighlightedAccountId(null), 3500);
     setTimeout(() => setToastVisible(false), 4000);
   }, [executeAddAccount, expandPlatform]);
 
+  // 動態平台列表：擴充預覽 = 12 平台，標準 = 3 平台
+  const platforms = (extensibilityMode === 'expansion-preview' ? EXPANSION_PLATFORMS : STANDARD_PLATFORMS) as Platform[];
+  const platformsWithAccounts = platforms.filter((p) => getAccountsByPlatform(p).length > 0);
+
   // 構建表格數據（按平台分組）
   const tableData: Array<{ type: 'group' | 'account', platform?: Platform, account?: SocialAccount, isLastInGroup?: boolean, isLastOfAllGroups?: boolean }> = [];
-  
-  const platforms = ['twitter', 'linkedin', 'instagram'] as Platform[];
-  platforms.forEach((platform, platformIndex) => {
+  platformsWithAccounts.forEach((platform, platformIndex) => {
     const platformAccounts = getAccountsByPlatform(platform);
-    const isLastPlatform = platformIndex === platforms.length - 1;
+    const isLastPlatform = platformIndex === platformsWithAccounts.length - 1;
     tableData.push({ type: 'group', platform });
     platformAccounts.forEach((account, index) => {
       const isLastInGroup = index === platformAccounts.length - 1;
@@ -283,9 +288,9 @@ export default function SocialAccountsSettings() {
             <div className="mb-4 flex items-start justify-between">
               <div className="flex flex-col gap-0.5">
                 <h2 className="text-xl font-bold text-gray-900">Social Account</h2>
-                <span className="text-xs text-gray-400">5 connected accounts</span>
+                <span className="text-xs text-gray-400">{accounts.length} connected accounts</span>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm border border-gray-200/80 rounded-lg hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-sm font-medium text-gray-700 cursor-pointer">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,6 +309,27 @@ export default function SocialAccountsSettings() {
               </div>
             </div>
 
+          {/* 快速跳轉：平台圖示列（僅擴充預覽且有多平台時顯示） */}
+          {extensibilityMode === 'expansion-preview' && platformsWithAccounts.length > 1 && (
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+              {platformsWithAccounts.map((platform) => {
+                const cfg = platformConfig[platform];
+                const Icon = cfg.icon;
+                return (
+                  <button
+                    key={platform}
+                    onClick={() => document.getElementById(`platform-group-${platform}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
+                    title={cfg.name}
+                    aria-label={`跳轉至 ${cfg.name}`}
+                  >
+                    <Icon className={`w-4 h-4 ${cfg.color}`} />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Grouped Table */}
           {layoutStyle === 'new' ? (
             <div>
@@ -315,9 +341,11 @@ export default function SocialAccountsSettings() {
                 <div className="col-span-2"></div>
               </div>
               
-              {/* Table Body - 分組卡片 */}
+              {/* Table Body - 分組卡片，0 帳號的平台不顯示 */}
               <div className="space-y-3">
-              {(['twitter', 'linkedin', 'instagram'] as Platform[]).map((platform) => {
+              {(['twitter', 'linkedin', 'instagram'] as Platform[])
+                .filter((platform) => getAccountsByPlatform(platform).length > 0)
+                .map((platform) => {
                 const config = platformConfig[platform];
                 const Icon = config.icon;
                 const platformAccounts = getAccountsByPlatform(platform);
@@ -326,12 +354,13 @@ export default function SocialAccountsSettings() {
                 const maxCount = config.maxAccounts === Infinity ? '∞' : config.maxAccounts;
                 
                 return (
-                  <div key={`platform-group-${platform}`} className="bg-gray-100/50 rounded-lg overflow-hidden">
+                  <div key={`platform-group-${platform}`} id={`platform-group-${platform}`} className="bg-gray-100/50 rounded-lg overflow-hidden scroll-mt-4">
                     {/* Platform Header */}
                     <GroupHeader
                       icon={Icon}
                       name={config.name}
                       color={config.color}
+                      iconBg={config.iconBg}
                       accountCount={accountCount}
                       maxAccounts={maxCount}
                       expiredCount={expiredCount}
@@ -344,31 +373,40 @@ export default function SocialAccountsSettings() {
                     {/* Platform Accounts */}
                     {platformExpanded[platform] && (
                       <div className="pl-[46px] pr-3 pb-3 space-y-2">
-                        {platformAccounts.map((account) => {
-                          const instagramAccounts = getAccountsByPlatform('instagram');
-                          return (
-                            <AccountRow
-                              key={account.id}
-                              ref={(el) => { accountRowRefs.current[account.id] = el; }}
-                              account={account}
-                              platform={platform}
-                              platformColor={config.color}
-                              onTogglePrimary={togglePrimary}
-                              singleInstagram={platform === 'instagram' && instagramAccounts.length === 1}
-                              isLastInGroup={false}
-                              isLastOfAllGroups={false}
-                              layoutStyle={layoutStyle}
-                              isHighlighted={highlightedAccountId === account.id}
-                              onDisconnectRequest={() => setAccountToDisconnect(account)}
-                              onReconnect={async () => {
-                                await reconnectAccount(account.id);
-                                setToastMessage('Account reconnected successfully.');
-                                setToastVisible(true);
-                                setTimeout(() => setToastVisible(false), 4000);
-                              }}
-                            />
-                          );
-                        })}
+                        <AnimatePresence>
+                          {platformAccounts.map((account) => {
+                            const instagramAccounts = getAccountsByPlatform('instagram');
+                            return (
+                              <motion.div
+                                key={account.id}
+                                initial={{ opacity: 0, y: -8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.25 }}
+                              >
+                                <AccountRow
+                                  ref={(el) => { accountRowRefs.current[account.id] = el; }}
+                                  account={account}
+                                  platform={platform}
+                                  platformColor={config.color}
+                                  onTogglePrimary={togglePrimary}
+                                  singleInstagram={platform === 'instagram' && instagramAccounts.length === 1}
+                                  isLastInGroup={false}
+                                  isLastOfAllGroups={false}
+                                  layoutStyle={layoutStyle}
+                                  isHighlighted={highlightedAccountId === account.id}
+                                  onDisconnectRequest={() => setAccountToDisconnect(account)}
+                                  onReconnect={async () => {
+                                    await reconnectAccount(account.id);
+                                    setToastMessage('Account reconnected successfully.');
+                                    setToastVisible(true);
+                                    setTimeout(() => setToastVisible(false), 4000);
+                                  }}
+                                />
+                              </motion.div>
+                            );
+                          })}
+                        </AnimatePresence>
                       </div>
                     )}
                   </div>
@@ -388,6 +426,7 @@ export default function SocialAccountsSettings() {
 
               {/* Table Body */}
               <div>
+              <AnimatePresence>
               {tableData.map((row, index) => {
                 if (row.type === 'group' && row.platform) {
                   const config = platformConfig[row.platform];
@@ -403,6 +442,7 @@ export default function SocialAccountsSettings() {
                       icon={Icon}
                       name={config.name}
                       color={config.color}
+                      iconBg={config.iconBg}
                       accountCount={accountCount}
                       maxAccounts={maxCount}
                       expiredCount={expiredCount}
@@ -410,6 +450,7 @@ export default function SocialAccountsSettings() {
                       expanded={platformExpanded[row.platform!]}
                       onToggle={() => togglePlatformExpanded(row.platform!)}
                       layoutStyle={layoutStyle}
+                      scrollTargetId={extensibilityMode === 'expansion-preview' ? `platform-group-${row.platform}` : undefined}
                     />
                   );
                 }
@@ -418,31 +459,39 @@ export default function SocialAccountsSettings() {
                   const instagramAccounts = getAccountsByPlatform('instagram');
                   const config = platformConfig[row.platform!];
                   return (
-                    <AccountRow
+                    <motion.div
                       key={row.account.id}
-                      ref={(el) => { accountRowRefs.current[row.account!.id] = el; }}
-                      account={row.account}
-                      platform={row.platform!}
-                      platformColor={config.color}
-                      onTogglePrimary={togglePrimary}
-                      singleInstagram={row.platform === 'instagram' && instagramAccounts.length === 1}
-                      isLastInGroup={row.isLastInGroup || false}
-                      isLastOfAllGroups={row.isLastOfAllGroups || false}
-                      layoutStyle={layoutStyle}
-                      isHighlighted={highlightedAccountId === row.account.id}
-                      onDisconnectRequest={() => setAccountToDisconnect(row.account!)}
-                      onReconnect={async () => {
-                        await reconnectAccount(row.account!.id);
-                        setToastMessage('Account reconnected successfully.');
-                        setToastVisible(true);
-                        setTimeout(() => setToastVisible(false), 4000);
-                      }}
-                    />
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <AccountRow
+                        ref={(el) => { accountRowRefs.current[row.account!.id] = el; }}
+                        account={row.account}
+                        platform={row.platform!}
+                        platformColor={config.color}
+                        onTogglePrimary={togglePrimary}
+                        singleInstagram={row.platform === 'instagram' && instagramAccounts.length === 1}
+                        isLastInGroup={row.isLastInGroup || false}
+                        isLastOfAllGroups={row.isLastOfAllGroups || false}
+                        layoutStyle={layoutStyle}
+                        isHighlighted={highlightedAccountId === row.account.id}
+                        onDisconnectRequest={() => setAccountToDisconnect(row.account!)}
+                        onReconnect={async () => {
+                          await reconnectAccount(row.account!.id);
+                          setToastMessage('Account reconnected successfully.');
+                          setToastVisible(true);
+                          setTimeout(() => setToastVisible(false), 4000);
+                        }}
+                      />
+                    </motion.div>
                   );
                 }
                 
                 return null;
               })}
+              </AnimatePresence>
               </div>
             </div>
           )}
@@ -456,8 +505,8 @@ export default function SocialAccountsSettings() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSelectPlatform={handleSelectPlatform}
-        linkedinCount={getAccountsByPlatform('linkedin').length}
-        instagramCount={getAccountsByPlatform('instagram').length}
+        platforms={platforms}
+        getAccountCount={(p) => getAccountsByPlatform(p).length}
       />
 
       {/* Connection Loading Overlay */}
@@ -503,10 +552,14 @@ export default function SocialAccountsSettings() {
         </div>
       )}
 
-      {/* Layout Style Toggle Button */}
-      <LayoutStyleToggle 
-        currentStyle={layoutStyle} 
-        onToggle={() => setLayoutStyle(layoutStyle === 'current' ? 'new' : 'current')} 
+      {/* Layout Style & Demo Toggle Button */}
+      <LayoutStyleToggle
+        currentStyle={layoutStyle}
+        onStyleChange={setLayoutStyle}
+        demoScenario={demoScenario}
+        onDemoScenarioChange={setDemoScenario}
+        extensibilityMode={extensibilityMode}
+        onExtensibilityChange={setExtensibilityMode}
       />
     </div>
   );

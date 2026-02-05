@@ -1,8 +1,35 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { SocialAccount, Platform } from '@/app/types/social-accounts';
+import { EXPANSION_PLATFORMS } from '@/app/constants/platform-config';
 
 // 用於產生唯一 ID
 let accountIdCounter = 100;
+
+// 產生擴充預覽 mock 資料（12 平台、30+ 帳號，資料驅動）
+function generateExpansionMockData(): SocialAccount[] {
+  const accounts: SocialAccount[] = [];
+  let id = 1;
+  const statuses: Array<'verified' | 'expired'> = ['verified', 'expired'];
+  const syncLabels = ['Just now', '5 minutes ago', '10 minutes ago', '1 hour ago', '2 hours ago'];
+  for (const platform of EXPANSION_PLATFORMS) {
+    const count = 1 + Math.floor(((id + platform.charCodeAt(0)) % 5));
+    for (let i = 0; i < count; i++) {
+      const status = statuses[(id + i) % 2];
+      accounts.push({
+        id: String(id++),
+        platform,
+        accountName: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Account ${i + 1}`,
+        accountHandle: platform === 'twitter' ? `@${platform}_${i + 1}` : `${platform}-account-${i + 1}`,
+        status,
+        followers: Math.floor(Math.random() * 500000) + 1000,
+        lastSynced: syncLabels[(id + i) % syncLabels.length],
+        ...(platform === 'instagram' && i === 0 ? { isPrimary: true } : {}),
+        ...(platform === 'linkedin' ? { linkedinType: 'Company Page' } : {}),
+      });
+    }
+  }
+  return accounts;
+}
 
 // 初始樣本數據
 const INITIAL_ACCOUNTS: SocialAccount[] = [
@@ -56,12 +83,24 @@ const INITIAL_ACCOUNTS: SocialAccount[] = [
   },
 ];
 
+export type ExtensibilityMode = 'standard' | 'expansion-preview';
+
 /**
  * 管理社群帳號數據和操作的 Hook
- * @returns 帳號數據和操作函數
+ * @param extensibilityMode 擴充模式：standard 使用 5 筆；expansion-preview 使用 12 平台 30+ 帳號
  */
-export function useSocialAccounts() {
-  const [accounts, setAccounts] = useState<SocialAccount[]>(INITIAL_ACCOUNTS);
+export function useSocialAccounts(extensibilityMode: ExtensibilityMode = 'standard') {
+  const [accounts, setAccounts] = useState<SocialAccount[]>(
+    extensibilityMode === 'expansion-preview' ? generateExpansionMockData() : INITIAL_ACCOUNTS
+  );
+
+  useEffect(() => {
+    if (extensibilityMode === 'expansion-preview') {
+      setAccounts(generateExpansionMockData());
+    } else {
+      setAccounts([...INITIAL_ACCOUNTS]);
+    }
+  }, [extensibilityMode]);
   const [showSwitchModal, setShowSwitchModal] = useState(false);
 
   /**
@@ -133,7 +172,7 @@ export function useSocialAccounts() {
       status: 'verified',
       followers: Math.floor(Math.random() * 50000) + 1000,
       lastSynced: 'Just now',
-      isPrimary: platform === 'instagram',
+      isPrimary: false,
     };
     if (platform === 'linkedin') {
       newAccount.linkedinType = 'Company Page';
@@ -160,11 +199,26 @@ export function useSocialAccounts() {
 
   /**
    * 刪除帳號
+   * Instagram Primary 邏輯：刪除 Primary 則剩餘者成為 Primary；
+   * 若只剩一個 IG 帳號則自動為 Primary
    */
   const deleteAccount = useCallback((accountId: string) => {
-    console.log(`Deleting account ${accountId}`);
-    // TODO: 實作刪除帳號的實際邏輯
-    setAccounts(prev => prev.filter(account => account.id !== accountId));
+    setAccounts(prev => {
+      const accountToDelete = prev.find(a => a.id === accountId);
+      const remaining = prev.filter(a => a.id !== accountId);
+      if (!accountToDelete || accountToDelete.platform !== 'instagram') {
+        return remaining;
+      }
+      const remainingIg = remaining.filter(a => a.platform === 'instagram');
+      if (remainingIg.length === 0) return remaining;
+      const needNewPrimary = accountToDelete.isPrimary || remainingIg.length === 1;
+      const newPrimaryId = needNewPrimary ? remainingIg[0].id : null;
+      return remaining.map(a =>
+        a.platform === 'instagram'
+          ? { ...a, isPrimary: a.id === newPrimaryId }
+          : a
+      );
+    });
   }, []);
 
   /**

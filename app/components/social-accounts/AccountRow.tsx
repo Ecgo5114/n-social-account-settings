@@ -56,23 +56,24 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
   
   return (
     <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
-      {/* 新增成功高亮樣式 - 4 秒後淡出 */}
-      {isHighlighted && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ delay: 4, duration: 0.5 }}
-          className="absolute inset-0 bg-emerald-100 border-l-4 border-emerald-500 rounded-md pointer-events-none"
-          onAnimationComplete={() => {}}
-        />
-      )}
+      {/* 高亮背景層 - 置於內容下方，3 秒後淡出 */}
+      <motion.div
+        initial={false}
+        animate={{
+          opacity: isHighlighted ? 1 : 0,
+        }}
+        transition={{
+          duration: isHighlighted ? 0.2 : 0.5,
+        }}
+        className="absolute inset-0 z-0 bg-emerald-50/80 rounded-md pointer-events-none"
+      />
       <div
-        className={`relative grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm ${baseBg} hover:bg-gray-50/50 transition-colors duration-200 cursor-pointer ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
+        className={`relative z-10 grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm transition-colors duration-200 cursor-pointer ${isHighlighted ? 'bg-transparent' : baseBg} hover:bg-gray-50/50 ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
       >
-        {/* 垂直虛線 - 在最左側，1px 粗細 - 只在 current 版型顯示 */}
+        {/* 垂直虛線 - 從開合箭頭下方延伸 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (
           <div 
-            className={`absolute left-[62px] top-0 border-l border-dashed border-gray-300 pointer-events-none ${
+            className={`absolute left-[34px] top-0 border-l border-dashed border-gray-300 pointer-events-none ${
               isLastInGroup ? 'h-1/2' : 'bottom-0'
             }`}
           ></div>
@@ -81,7 +82,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         {/* L 形橫向虛線 - 只在最後一個子項目顯示 - 只在 current 版型顯示 */}
         {isLastInGroup && layoutStyle !== 'new' && (
           <div 
-            className="absolute left-[62px] top-1/2 w-[8px] border-t border-dashed border-gray-300 pointer-events-none"
+            className="absolute left-[34px] top-1/2 w-[8px] border-t border-dashed border-gray-300 pointer-events-none"
           ></div>
         )}
         

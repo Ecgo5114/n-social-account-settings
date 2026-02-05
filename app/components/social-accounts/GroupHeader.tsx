@@ -5,6 +5,7 @@ interface GroupHeaderProps {
   icon: any;
   name: string;
   color: string;
+  iconBg?: string;
   accountCount: number;
   maxAccounts: number | string;
   expiredCount: number;
@@ -12,6 +13,8 @@ interface GroupHeaderProps {
   expanded: boolean;
   onToggle: () => void;
   layoutStyle?: LayoutStyle;
+  /** 用於快速跳轉的 id，如 platform-group-twitter */
+  scrollTargetId?: string;
 }
 
 /**
@@ -22,6 +25,7 @@ export function GroupHeader({
   icon: Icon,
   name,
   color,
+  iconBg = 'bg-gray-100 border border-gray-200',
   accountCount,
   maxAccounts,
   expiredCount,
@@ -29,11 +33,12 @@ export function GroupHeader({
   expanded,
   onToggle,
   layoutStyle = 'current',
+  scrollTargetId,
 }: GroupHeaderProps) {
   return (
-    <div className="relative">
+    <div id={scrollTargetId} className={`relative ${scrollTargetId ? 'scroll-mt-4' : ''}`}>
       <div className={`grid grid-cols-12 gap-6 ${layoutStyle === 'new' ? 'px-3 py-3' : 'px-6 py-4'} ${layoutStyle === 'new' ? 'bg-transparent' : 'bg-white'}`}>
-        <div className="col-span-4 flex items-center gap-2.5">
+        <div className="col-span-12 flex items-center gap-2.5">
           {/* 展開/收起按鈕 */}
           <button
             onClick={onToggle}
@@ -46,25 +51,23 @@ export function GroupHeader({
             )}
           </button>
           
-          <div className={`${layoutStyle === 'new' ? 'w-8 h-8' : 'w-7 h-7'} rounded-lg ${color === 'text-black' ? 'bg-gray-100 border border-gray-200' : color === 'text-[#0A66C2]' ? 'bg-blue-50 border border-blue-200' : 'bg-pink-50 border border-pink-200'} flex items-center justify-center`}>
+          <div className={`${layoutStyle === 'new' ? 'w-8 h-8' : 'w-7 h-7'} rounded-lg ${iconBg} flex items-center justify-center`}>
             <Icon className={`${layoutStyle === 'new' ? 'w-[18px] h-[18px]' : 'w-4 h-4'} ${color}`} />
           </div>
           <div className="flex items-center gap-2.5">
             <span className="text-sm font-semibold text-gray-900">{name}</span>
+            <span className={`inline-flex items-center ${layoutStyle === 'new' ? 'px-2.5 py-1 bg-gray-200 rounded-md text-[10px]' : 'px-2.5 py-1 bg-gray-100 rounded-md text-[10px]'} font-medium text-gray-600`}>
+              {accountCount} / {maxAccounts} Connected
+            </span>
             {expiredCount > 0 && (
-              <div className={`flex items-center gap-1 ${layoutStyle === 'new' ? 'px-2.5 py-1 border border-red-300 bg-white rounded-full' : 'px-2 py-0.5 bg-orange-50 rounded-full'}`}>
-                <AlertCircle className={`${layoutStyle === 'new' ? 'w-3.5 h-3.5 text-red-600' : 'w-3 h-3 text-orange-600'}`} />
-                <span className={`${layoutStyle === 'new' ? 'text-xs text-red-600' : 'text-[10px] text-orange-600'} font-medium`}>
+              <div className={`flex items-center gap-1 ${layoutStyle === 'new' ? 'px-2.5 py-1 border border-red-300 bg-white rounded-md' : 'px-2 py-0.5 bg-orange-50 rounded-full'}`}>
+                <AlertCircle className={`${layoutStyle === 'new' ? 'w-3 h-3 text-red-600' : 'w-3 h-3 text-orange-600'}`} />
+                <span className={`${layoutStyle === 'new' ? 'text-[10px] text-red-600' : 'text-[10px] text-orange-600'} font-medium`}>
                   {expiredCount} {expiredCount === 1 ? 'issue' : 'issues'} pending
                 </span>
               </div>
             )}
           </div>
-        </div>
-        <div className="col-span-8 flex items-center justify-end">
-          <span className={`inline-flex items-center ${layoutStyle === 'new' ? 'px-3 py-1.5' : 'px-2.5 py-1'} bg-gray-100 rounded-md ${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-medium text-gray-600`}>
-            {accountCount} / {maxAccounts} Connected
-          </span>
         </div>
       </div>
     </div>
