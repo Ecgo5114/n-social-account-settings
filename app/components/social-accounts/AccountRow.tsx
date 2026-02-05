@@ -1,4 +1,9 @@
-import { Users, RefreshCw, MoreHorizontal } from 'lucide-react';
+'use client';
+
+import { forwardRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Users, RefreshCw, MoreHorizontal, Loader2 } from 'lucide-react';
+import { ActionMenu } from './ActionMenu';
 import type { SocialAccount, Platform, LayoutStyle } from '@/app/types/social-accounts';
 
 interface AccountRowProps {
@@ -10,13 +15,19 @@ interface AccountRowProps {
   isLastInGroup: boolean;
   isLastOfAllGroups: boolean;
   layoutStyle?: LayoutStyle;
+  /** 是否顯示新增成功的高亮動畫（3 秒後淡出） */
+  isHighlighted?: boolean;
+  /** 點擊 Disconnect 時觸發（顯示確認彈窗） */
+  onDisconnectRequest: () => void;
+  /** 點擊 Reconnect 時觸發（重新連接／刷新，需回傳 Promise 以支援載入狀態） */
+  onReconnect: () => Promise<void>;
 }
 
 /**
  * 帳號行組件
  * 顯示單個社群帳號的詳細信息和操作按鈕
  */
-export function AccountRow({
+export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function AccountRow({
   account,
   platform,
   platformColor,
@@ -25,19 +36,38 @@ export function AccountRow({
   isLastInGroup,
   isLastOfAllGroups,
   layoutStyle = 'current',
-}: AccountRowProps) {
+  isHighlighted = false,
+  onDisconnectRequest,
+  onReconnect,
+}, ref) {
+  const [reconnecting, setReconnecting] = useState(false);
   const isExpired = account.status === 'expired';
+
+  const handleReconnect = async () => {
+    setReconnecting(true);
+    await onReconnect();
+    setReconnecting(false);
+  };
+  const baseBg = layoutStyle === 'new'
+    ? 'bg-white hover:bg-gray-50/50'
+    : isExpired
+      ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-100/70'
+      : 'bg-gray-50/80 hover:bg-gray-100/70';
   
   return (
-    <div className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
+    <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
+      {/* 新增成功高亮樣式 - 4 秒後淡出 */}
+      {isHighlighted && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ delay: 4, duration: 0.5 }}
+          className="absolute inset-0 bg-emerald-100 border-l-4 border-emerald-500 rounded-md pointer-events-none"
+          onAnimationComplete={() => {}}
+        />
+      )}
       <div
-        className={`relative grid grid-cols-12 gap-6 py-3 ${
-          layoutStyle === 'new'
-            ? 'bg-white hover:bg-gray-50/50 rounded-md shadow-sm'
-            : isExpired
-              ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-100/70'
-              : 'bg-gray-50/80 hover:bg-gray-100/70'
-        } transition-all duration-200 cursor-pointer ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
+        className={`relative grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm ${baseBg} hover:bg-gray-50/50 transition-colors duration-200 cursor-pointer ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
       >
         {/* 垂直虛線 - 在最左側，1px 粗細 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (
@@ -118,27 +148,38 @@ export function AccountRow({
       <div className={`col-span-2 flex items-center justify-end gap-2 ${layoutStyle === 'new' ? 'pr-5' : 'pr-6'}`}>
         {account.status === 'expired' && (
           <button 
+            onClick={(e) => { e.stopPropagation(); handleReconnect(); }}
+            disabled={reconnecting}
             className={`px-3 py-1.5 text-xs font-medium ${
               layoutStyle === 'new'
                 ? 'bg-red-600 text-white hover:bg-red-700'
                 : 'text-red-600 border border-red-300 hover:bg-red-50'
-            } rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5`}
+            } rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5 disabled:opacity-70`}
             title="Reconnect account"
             aria-label="重新連接帳號"
           >
-            <RefreshCw className={`${layoutStyle === 'new' ? 'w-3.5 h-3.5' : 'w-3.5 h-3.5'}`} />
-            Reconnect
+            {reconnecting ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="w-3.5 h-3.5" />
+            )}
+            {reconnecting ? 'Reconnecting...' : 'Reconnect'}
           </button>
         )}
-        <button 
-          className={`${layoutStyle === 'new' ? 'px-2.5 py-1.5' : 'p-1.5'} bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 cursor-pointer border border-gray-200`}
-          title="More"
-          aria-label="更多選項"
-        >
-          <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-4 h-4'} text-gray-600 hover:text-[#1A929F] transition-colors duration-200`} />
-        </button>
+        <ActionMenu
+          trigger={
+            <span className={`inline-flex ${layoutStyle === 'new' ? 'px-2.5 py-1.5' : 'p-1.5'} bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200`}>
+              <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-4 h-4'} text-gray-600 hover:text-[#1A929F] transition-colors duration-200`} />
+            </span>
+          }
+          platform={platform}
+          isPrimary={account.isPrimary}
+          onDisconnect={onDisconnectRequest}
+          onReconnect={onReconnect}
+          onSetPrimary={platform === 'instagram' && !singleInstagram ? () => onTogglePrimary(account.id) : undefined}
+        />
       </div>
       </div>
     </div>
   );
-}
+});

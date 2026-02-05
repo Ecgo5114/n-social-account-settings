@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react';
 import type { SocialAccount, Platform } from '@/app/types/social-accounts';
 
+// 用於產生唯一 ID
+let accountIdCounter = 100;
+
 // 初始樣本數據
 const INITIAL_ACCOUNTS: SocialAccount[] = [
   {
@@ -92,7 +95,7 @@ export function useSocialAccounts() {
   }, [accounts]);
 
   /**
-   * 處理新增帳號
+   * 處理新增帳號（從 GroupHeader 點擊，可能顯示 Switch Modal）
    * 包含平台特定的限制邏輯
    */
   const handleAddAccount = useCallback((platform: Platform) => {
@@ -109,27 +112,50 @@ export function useSocialAccounts() {
     if (platform === 'instagram') {
       const instagramAccounts = accounts.filter(acc => acc.platform === 'instagram');
       if (instagramAccounts.length >= 2) {
-        alert('Instagram 最多只能連接兩個帳號');
         return;
       }
     }
     
     console.log(`Adding new ${platform} account`);
-    // TODO: 實作新增帳號的實際邏輯
+    // 由 AddAccountModal 選擇平台後，透過 executeAddAccount 處理
   }, [accounts]);
 
   /**
-   * 重新連接帳號
+   * 執行新增帳號（模擬串聯後寫入 mockData）
+   * @returns 新增的帳號，供滾動與高亮使用
    */
-  const reconnectAccount = useCallback((accountId: string) => {
-    console.log(`Reconnecting account ${accountId}`);
-    // TODO: 實作重新連接的實際邏輯
-    // 示例：更新帳號狀態為 'verified'
-    setAccounts(prev => prev.map(account => 
-      account.id === accountId 
-        ? { ...account, status: 'verified' as const, lastSynced: 'Just now' }
-        : account
-    ));
+  const executeAddAccount = useCallback((platform: Platform): Promise<SocialAccount> => {
+    const newAccount: SocialAccount = {
+      id: `new-${++accountIdCounter}`,
+      platform,
+      accountName: `New ${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
+      accountHandle: platform === 'twitter' ? '@new_account' : 'new-account',
+      status: 'verified',
+      followers: Math.floor(Math.random() * 50000) + 1000,
+      lastSynced: 'Just now',
+      isPrimary: platform === 'instagram',
+    };
+    if (platform === 'linkedin') {
+      newAccount.linkedinType = 'Company Page';
+    }
+    setAccounts(prev => [...prev, newAccount]);
+    return Promise.resolve(newAccount);
+  }, []);
+
+  /**
+   * 重新連接帳號（模擬授權流程，含載入延遲）
+   */
+  const reconnectAccount = useCallback((accountId: string): Promise<void> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        setAccounts(prev => prev.map(account => 
+          account.id === accountId 
+            ? { ...account, status: 'verified' as const, lastSynced: 'Just now' }
+            : account
+        ));
+        resolve();
+      }, 1200);
+    });
   }, []);
 
   /**
@@ -167,6 +193,7 @@ export function useSocialAccounts() {
     // 操作函數
     togglePrimary,
     handleAddAccount,
+    executeAddAccount,
     reconnectAccount,
     deleteAccount,
     setShowSwitchModal,

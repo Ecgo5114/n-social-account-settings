@@ -23,6 +23,13 @@ export function usePlatformExpanded() {
   };
 
   /**
+   * 展開特定平台（用於新增帳號後確保該平台可見）
+   */
+  const expandPlatform = (platform: Platform) => {
+    setPlatformExpanded(prev => ({ ...prev, [platform]: true }));
+  };
+
+  /**
    * 展開所有平台
    */
   const expandAll = () => {
@@ -47,6 +54,7 @@ export function usePlatformExpanded() {
   return {
     platformExpanded,
     togglePlatformExpanded,
+    expandPlatform,
     expandAll,
     collapseAll,
   };

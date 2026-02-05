@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { 
   Twitter, Linkedin, Instagram, AlertCircle, Edit2, MoreHorizontal, CheckCircle2, Plus,
@@ -17,6 +17,10 @@ import { NavItem } from './components/navigation/NavItem';
 import { GroupHeader } from './components/social-accounts/GroupHeader';
 import { AccountRow } from './components/social-accounts/AccountRow';
 import { LayoutStyleToggle } from './components/social-accounts/LayoutStyleToggle';
+import { AddAccountModal } from './components/social-accounts/AddAccountModal';
+import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
+import { Toast } from './components/social-accounts/Toast';
+import { DisconnectConfirmationModal } from './components/social-accounts/DisconnectConfirmationModal';
 
 export default function SocialAccountsSettings() {
   const { theme } = useTheme();
@@ -29,18 +33,58 @@ export default function SocialAccountsSettings() {
     formatFollowers,
     togglePrimary,
     handleAddAccount,
+    executeAddAccount,
     reconnectAccount,
     deleteAccount,
     setShowSwitchModal,
   } = useSocialAccounts();
   
   const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
-  const { platformExpanded, togglePlatformExpanded } = usePlatformExpanded();
+  const { platformExpanded, togglePlatformExpanded, expandPlatform } = usePlatformExpanded();
 
   // UI 狀態（不屬於業務邏輯的 UI 狀態）
   const [activeTab, setActiveTab] = useState('social');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [settingsExpanded, setSettingsExpanded] = useState(true);
+
+  // Add Account 流程狀態
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [connectingPlatform, setConnectingPlatform] = useState<Platform | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [highlightedAccountId, setHighlightedAccountId] = useState<string | null>(null);
+  const accountRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Disconnect 確認 Modal
+  const [accountToDisconnect, setAccountToDisconnect] = useState<SocialAccount | null>(null);
+
+  const handleDisconnectConfirm = useCallback(() => {
+    if (accountToDisconnect) {
+      deleteAccount(accountToDisconnect.id);
+      setAccountToDisconnect(null);
+      setToastMessage('Account disconnected successfully.');
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 4000);
+    }
+  }, [accountToDisconnect, deleteAccount]);
+
+  // 選擇平台後：模擬串聯 → 新增帳號 → 成功反饋
+  const handleSelectPlatform = useCallback(async (platform: Platform) => {
+    setShowAddModal(false);
+    setConnectingPlatform(platform);
+    await new Promise(r => setTimeout(r, 1800));
+    const newAccount = await executeAddAccount(platform);
+    setConnectingPlatform(null);
+    expandPlatform(platform);
+    setToastVisible(true);
+    setToastMessage(`Successfully connected to ${platformConfig[platform].name}`);
+    setHighlightedAccountId(newAccount.id);
+    requestAnimationFrame(() => {
+      accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    setTimeout(() => setHighlightedAccountId(null), 4500);
+    setTimeout(() => setToastVisible(false), 4000);
+  }, [executeAddAccount, expandPlatform]);
 
   // 構建表格數據（按平台分組）
   const tableData: Array<{ type: 'group' | 'account', platform?: Platform, account?: SocialAccount, isLastInGroup?: boolean, isLastOfAllGroups?: boolean }> = [];
@@ -250,7 +294,10 @@ export default function SocialAccountsSettings() {
                   Filters
                 </button>
                 
-                <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer">
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer hover:opacity-90"
+                >
                   <Plus className="w-4 h-4" />
                   Add Account
                 </button>
@@ -260,11 +307,11 @@ export default function SocialAccountsSettings() {
           {/* Grouped Table */}
           {layoutStyle === 'new' ? (
             <div>
-              {/* Table Header - 獨立有圓角 */}
-              <div className="grid grid-cols-12 gap-6 px-6 py-3 bg-gray-100/50 rounded-lg mb-3">
-                <div className="col-span-4 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-[30px]">Account</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Status / Last Synced</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Followers</div>
+              {/* Table Header - 獨立有圓角，對齊帳號列 */}
+              <div className="grid grid-cols-12 gap-6 pl-[46px] pr-3 py-3 bg-gray-100/50 rounded-lg mb-3">
+                <div className="col-span-4 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Account</div>
+                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-2">Status / Last Synced</div>
+                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-2">Followers</div>
                 <div className="col-span-2"></div>
               </div>
               
@@ -302,6 +349,7 @@ export default function SocialAccountsSettings() {
                           return (
                             <AccountRow
                               key={account.id}
+                              ref={(el) => { accountRowRefs.current[account.id] = el; }}
                               account={account}
                               platform={platform}
                               platformColor={config.color}
@@ -310,6 +358,14 @@ export default function SocialAccountsSettings() {
                               isLastInGroup={false}
                               isLastOfAllGroups={false}
                               layoutStyle={layoutStyle}
+                              isHighlighted={highlightedAccountId === account.id}
+                              onDisconnectRequest={() => setAccountToDisconnect(account)}
+                              onReconnect={async () => {
+                                await reconnectAccount(account.id);
+                                setToastMessage('Account reconnected successfully.');
+                                setToastVisible(true);
+                                setTimeout(() => setToastVisible(false), 4000);
+                              }}
                             />
                           );
                         })}
@@ -364,6 +420,7 @@ export default function SocialAccountsSettings() {
                   return (
                     <AccountRow
                       key={row.account.id}
+                      ref={(el) => { accountRowRefs.current[row.account!.id] = el; }}
                       account={row.account}
                       platform={row.platform!}
                       platformColor={config.color}
@@ -372,6 +429,14 @@ export default function SocialAccountsSettings() {
                       isLastInGroup={row.isLastInGroup || false}
                       isLastOfAllGroups={row.isLastOfAllGroups || false}
                       layoutStyle={layoutStyle}
+                      isHighlighted={highlightedAccountId === row.account.id}
+                      onDisconnectRequest={() => setAccountToDisconnect(row.account!)}
+                      onReconnect={async () => {
+                        await reconnectAccount(row.account!.id);
+                        setToastMessage('Account reconnected successfully.');
+                        setToastVisible(true);
+                        setTimeout(() => setToastVisible(false), 4000);
+                      }}
                     />
                   );
                 }
@@ -385,6 +450,29 @@ export default function SocialAccountsSettings() {
         </div>
         </main>
       </div>
+
+      {/* Add Account Modal */}
+      <AddAccountModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSelectPlatform={handleSelectPlatform}
+        linkedinCount={getAccountsByPlatform('linkedin').length}
+        instagramCount={getAccountsByPlatform('instagram').length}
+      />
+
+      {/* Connection Loading Overlay */}
+      <ConnectionLoadingOverlay isVisible={!!connectingPlatform} platform={connectingPlatform} />
+
+      {/* Success Toast (新增帳號 / 解除連接) */}
+      <Toast message={toastMessage} isVisible={toastVisible} />
+
+      {/* Disconnect 確認 Modal */}
+      <DisconnectConfirmationModal
+        isOpen={!!accountToDisconnect}
+        accountName={accountToDisconnect?.accountName}
+        onConfirm={handleDisconnectConfirm}
+        onCancel={() => setAccountToDisconnect(null)}
+      />
 
       {/* Switch Account Modal */}
       {showSwitchModal && (
