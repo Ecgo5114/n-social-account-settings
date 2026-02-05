@@ -50,11 +50,11 @@ export function GroupHeader({
             <Icon className={`${layoutStyle === 'new' ? 'w-[18px] h-[18px]' : 'w-4 h-4'} ${color}`} />
           </div>
           <div className="flex items-center gap-2.5">
-            <span className={`${layoutStyle === 'new' ? 'text-base' : 'text-sm'} font-semibold text-gray-900`}>{name}</span>
+            <span className="text-sm font-semibold text-gray-900">{name}</span>
             {expiredCount > 0 && (
-              <div className={`flex items-center gap-1 ${layoutStyle === 'new' ? 'px-2.5 py-1' : 'px-2 py-0.5'} bg-orange-50 rounded-full`}>
-                <AlertCircle className={`${layoutStyle === 'new' ? 'w-3.5 h-3.5' : 'w-3 h-3'} text-orange-600`} />
-                <span className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-medium text-orange-600`}>
+              <div className={`flex items-center gap-1 ${layoutStyle === 'new' ? 'px-2.5 py-1 border border-red-300 bg-white rounded-full' : 'px-2 py-0.5 bg-orange-50 rounded-full'}`}>
+                <AlertCircle className={`${layoutStyle === 'new' ? 'w-3.5 h-3.5 text-red-600' : 'w-3 h-3 text-orange-600'}`} />
+                <span className={`${layoutStyle === 'new' ? 'text-xs text-red-600' : 'text-[10px] text-orange-600'} font-medium`}>
                   {expiredCount} {expiredCount === 1 ? 'issue' : 'issues'} pending
                 </span>
               </div>

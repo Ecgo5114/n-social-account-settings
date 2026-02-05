@@ -33,9 +33,7 @@ export function AccountRow({
       <div
         className={`relative grid grid-cols-12 gap-6 py-3 ${
           layoutStyle === 'new'
-            ? isExpired
-              ? 'bg-red-50 hover:bg-red-100/80 rounded-md border-2 border-red-200'
-              : 'bg-white hover:bg-gray-50/50 rounded-md shadow-sm'
+            ? 'bg-white hover:bg-gray-50/50 rounded-md shadow-sm'
             : isExpired
               ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-100/70'
               : 'bg-gray-50/80 hover:bg-gray-100/70'
@@ -59,19 +57,23 @@ export function AccountRow({
         
         {/* Account Column - 調整縮排 */}
         <div className={`col-span-4 flex items-center gap-2.5 ${layoutStyle === 'new' ? 'pl-5' : 'pl-[70px]'}`}>
-          <div className={`${layoutStyle === 'new' ? 'w-8 h-8' : 'w-7 h-7'} rounded-full bg-gray-200 flex items-center justify-center ${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-semibold text-gray-700 flex-shrink-0`}>
+          <div className={`${layoutStyle === 'new' ? 'w-8 h-8' : 'w-7 h-7'} rounded-full ${
+            layoutStyle === 'new' 
+              ? 'bg-[#1A929F]/10 text-[#1A929F]' 
+              : 'bg-gray-200 text-gray-700'
+          } flex items-center justify-center ${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-semibold flex-shrink-0`}>
             {account.accountName.substring(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <div className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-semibold text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200`}>{account.accountName}</div>
+            <div className="flex items-center gap-1.5">
+              <div className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200`}>{account.accountName}</div>
               {platform === 'instagram' && account.isPrimary && (
-                <span className={`inline-flex items-center ${layoutStyle === 'new' ? 'px-2.5 py-0.5' : 'px-2 py-0'} rounded-full ${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-medium bg-[#1A929F] text-white flex-shrink-0`}>
+                <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0">
                   Primary
                 </span>
               )}
             </div>
-            <div className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-500 truncate`}>{account.accountHandle}</div>
+            <div className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-400 truncate`}>{account.accountHandle}</div>
           </div>
         </div>
 
@@ -80,18 +82,18 @@ export function AccountRow({
         <div className="flex items-center gap-2">
           {account.status === 'verified' ? (
             <>
-              <div className={`${layoutStyle === 'new' ? 'w-2 h-2' : 'w-1.5 h-1.5'} rounded-full bg-emerald-600`}></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-600"></div>
               <span className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-emerald-600`}>Connected</span>
             </>
           ) : (
             <>
-              <div className={`${layoutStyle === 'new' ? 'w-2 h-2' : 'w-1.5 h-1.5'} rounded-full bg-red-600`}></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
               <span className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-red-600`}>Expired</span>
             </>
           )}
         </div>
         {/* Last Synced 作為輔助資訊 */}
-        <span className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-500`}>
+        <span className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-400`}>
           {account.lastSynced || '-'}
         </span>
       </div>
@@ -116,20 +118,24 @@ export function AccountRow({
       <div className={`col-span-2 flex items-center justify-end gap-2 ${layoutStyle === 'new' ? 'pr-5' : 'pr-6'}`}>
         {account.status === 'expired' && (
           <button 
-            className={`px-3 py-1.5 ${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-red-600 border border-red-300 hover:bg-red-50 rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5`}
+            className={`px-3 py-1.5 text-xs font-medium ${
+              layoutStyle === 'new'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'text-red-600 border border-red-300 hover:bg-red-50'
+            } rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5`}
             title="Reconnect account"
             aria-label="重新連接帳號"
           >
-            <RefreshCw className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-3.5 h-3.5'}`} />
+            <RefreshCw className={`${layoutStyle === 'new' ? 'w-3.5 h-3.5' : 'w-3.5 h-3.5'}`} />
             Reconnect
           </button>
         )}
         <button 
-          className={`${layoutStyle === 'new' ? 'p-2' : 'p-1.5'} bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 cursor-pointer border border-gray-200`}
+          className={`${layoutStyle === 'new' ? 'px-2.5 py-1.5' : 'p-1.5'} bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 cursor-pointer border border-gray-200`}
           title="More"
           aria-label="更多選項"
         >
-          <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-[18px] h-[18px]' : 'w-4 h-4'} text-gray-600 hover:text-[#1A929F] transition-colors duration-200`} />
+          <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-4 h-4'} text-gray-600 hover:text-[#1A929F] transition-colors duration-200`} />
         </button>
       </div>
       </div>
