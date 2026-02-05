@@ -1,0 +1,162 @@
+[
+  {
+    "step": 1,
+    "location": "首頁載入與初始狀態",
+    "heuristic": "Visibility of System Status",
+    "description": "頁面標題顯示預設的「Create Next App」而非應用程式名稱「Nitra - Social Accounts」，用戶無法清楚知道當前所在的應用程式",
+    "recommendation": "在 layout.tsx 中更新 metadata.title 為「Nitra - Social Accounts」或動態頁面標題",
+    "severity": "Medium"
+  },
+  {
+    "step": 2,
+    "location": "頂部導航列 - 通知和設定圖標按鈕",
+    "heuristic": "Seek Universal Usability",
+    "description": "Bell（通知）和 Settings（設定）圖標按鈕沒有可訪問的名稱標籤，螢幕閱讀器用戶無法理解這些按鈕的功能",
+    "recommendation": "為圖標按鈕添加 aria-label 屬性：<button aria-label=\"通知\">...</button> 和 <button aria-label=\"設定\">...</button>",
+    "severity": "High"
+  },
+  {
+    "step": 3,
+    "location": "頂部搜尋框",
+    "heuristic": "Seek Universal Usability",
+    "description": "搜尋輸入框僅使用 placeholder 文字，沒有關聯的 label 元素，不符合 WCAG 3.3.2 標籤要求",
+    "recommendation": "添加視覺上隱藏但對螢幕閱讀器可見的 label：<label htmlFor=\"search\" className=\"sr-only\">搜尋</label>",
+    "severity": "High"
+  },
+  {
+    "step": 4,
+    "location": "搜尋功能",
+    "heuristic": "Visibility of System Status",
+    "description": "在搜尋框中輸入文字後，沒有任何視覺反饋、搜尋結果或建議。用戶不知道搜尋功能是否正常運作",
+    "recommendation": "實作即時搜尋或添加搜尋按鈕；顯示搜尋結果或「未找到結果」訊息；考慮添加自動完成建議",
+    "severity": "Critical"
+  },
+  {
+    "step": 5,
+    "location": "Twitter 群組 - Add 按鈕",
+    "heuristic": "Offer Informative Feedback",
+    "description": "點擊 Add 按鈕後沒有任何視覺反饋（僅在控制台記錄），用戶不知道操作是否成功觸發",
+    "recommendation": "添加即時反饋：顯示模態框、載入狀態或跳轉到帳號連接頁面；考慮添加成功/錯誤通知",
+    "severity": "Critical"
+  },
+  {
+    "step": 6,
+    "location": "LinkedIn 群組 - Add 按鈕",
+    "heuristic": "Help Users Recognize, Diagnose, and Recover from Errors",
+    "description": "當嘗試添加第二個 LinkedIn 帳號時，會顯示模態框說明限制，這很好。但模態框可以改進：1) 沒有說明為什麼有此限制；2) 「Switch Account」按鈕的後果不夠清晰",
+    "recommendation": "在模態框中添加：1) 簡短說明限制原因（如「LinkedIn API 限制」）；2) 明確說明切換帳號的後果（「這將移除 TechCorp Inc. 並允許您連接新帳號」）",
+    "severity": "Medium"
+  },
+  {
+    "step": 7,
+    "location": "Instagram 帳號數量限制",
+    "heuristic": "Help Users Recognize, Diagnose, and Recover from Errors",
+    "description": "當 Instagram 帳號達到上限（2個）時，使用瀏覽器原生 alert() 顯示錯誤訊息，不符合現代 UI 設計標準且用戶體驗不佳",
+    "recommendation": "將 alert() 替換為應用內通知或模態框，使用友善的錯誤訊息和視覺設計；考慮在達到上限前就禁用 Add 按鈕並顯示工具提示",
+    "severity": "High"
+  },
+  {
+    "step": 8,
+    "location": "Instagram - 過期帳號",
+    "heuristic": "Visibility of System Status",
+    "description": "TechCorp Instagram 帳號顯示為「Expired」並有「Reconnect」按鈕，這很好。但點擊 Reconnect 後沒有任何反饋",
+    "recommendation": "實作 Reconnect 功能：跳轉到 Instagram 授權頁面或顯示重新連接指示；添加載入狀態和成功/錯誤反饋",
+    "severity": "High"
+  },
+  {
+    "step": 9,
+    "location": "帳號表格 - Edit 和 More 按鈕",
+    "heuristic": "Offer Informative Feedback",
+    "description": "每個帳號列的 Edit 和 More（三點）按鈕點擊後沒有反應，用戶不知道這些按鈕的功能",
+    "recommendation": "實作 Edit 功能（顯示編輯表單或模態框）；實作 More 按鈕（顯示下拉選單包含刪除、查看詳情等選項）；如果功能尚未實作，考慮暫時禁用按鈕或顯示「即將推出」工具提示",
+    "severity": "High"
+  },
+  {
+    "step": 10,
+    "location": "Instagram - Set as Primary 功能",
+    "heuristic": "Offer Informative Feedback",
+    "description": "切換 Primary Instagram 帳號時，視覺變化立即發生但沒有成功確認訊息。用戶可能不確定操作是否已保存",
+    "recommendation": "添加簡短的成功通知（如 toast 訊息）：「TechCorp Careers 已設為主要帳號」",
+    "severity": "Low"
+  },
+  {
+    "step": 11,
+    "location": "整體 - 載入狀態",
+    "heuristic": "Visibility of System Status",
+    "description": "當點擊任何操作按鈕（Add、Edit、Reconnect）時，沒有載入指示器或狀態變化，用戶不知道系統是否正在處理請求",
+    "recommendation": "為所有異步操作添加載入狀態：按鈕內顯示 spinner、禁用按鈕、或顯示全局載入指示器",
+    "severity": "High"
+  },
+  {
+    "step": 12,
+    "location": "頂部導航 - 重複的操作按鈕",
+    "heuristic": "Consistency and Standards",
+    "description": "頂部有「Add Platform」按鈕，主要內容區域有「Add Account」按鈕，兩者的關係和差異不清楚，可能造成混淆",
+    "recommendation": "明確區分兩者：1) 如果功能相同，移除重複；2) 如果不同，使用更明確的標籤（如「連接新平台」vs「添加現有平台的帳號」）；3) 考慮添加工具提示說明差異",
+    "severity": "Medium"
+  },
+  {
+    "step": 13,
+    "location": "側邊欄 - 摺疊/展開功能",
+    "heuristic": "Flexibility and Efficiency",
+    "description": "側邊欄摺疊功能運作良好，但缺少鍵盤快捷鍵。進階用戶可能希望快速切換",
+    "recommendation": "添加鍵盤快捷鍵（如 Ctrl/Cmd + B）來切換側邊欄；在 Help 頁面或設定中列出所有快捷鍵",
+    "severity": "Low"
+  },
+  {
+    "step": 14,
+    "location": "Active/Inactive Accounts 標籤",
+    "heuristic": "Consistency and Standards",
+    "description": "「Inactive Accounts」標籤存在但點擊後沒有反應，用戶會認為功能已實作",
+    "recommendation": "1) 實作 Inactive Accounts 功能顯示已停用的帳號；2) 如果尚未實作，添加「即將推出」標籤或暫時隱藏；3) 確保標籤狀態與內容同步",
+    "severity": "Medium"
+  },
+  {
+    "step": 15,
+    "location": "Filters 按鈕",
+    "heuristic": "Offer Informative Feedback",
+    "description": "Filters 按鈕存在但點擊後沒有反應，沒有篩選面板或選項出現",
+    "recommendation": "實作篩選功能：顯示下拉面板或側邊欄，包含平台、狀態、類型等篩選選項；添加「清除篩選」和「套用」按鈕；顯示已套用的篩選標籤",
+    "severity": "Medium"
+  },
+  {
+    "step": 16,
+    "location": "整體鍵盤導航",
+    "heuristic": "Seek Universal Usability",
+    "description": "基本的 Tab 鍵導航有效，但焦點指示器可見度需要測試。某些互動元素（如 radio button）的鍵盤操作可能不夠直觀",
+    "recommendation": "全面測試鍵盤導航：確保所有互動元素可通過 Tab 訪問；確保焦點指示器清晰可見（測試對比度）；支援 Enter/Space 啟動按鈕；支援 Arrow keys 在單選按鈕組中導航；添加 skip links",
+    "severity": "High"
+  },
+  {
+    "step": 17,
+    "location": "整體色彩對比",
+    "heuristic": "Seek Universal Usability",
+    "description": "大部分文字對比度良好，但灰色次要文字（如 @handles）和某些輔助文字可能需要驗證是否符合 WCAG AA 標準（4.5:1）",
+    "recommendation": "使用對比度檢查工具驗證所有文字：1) 次要文字（灰色 handles）；2) 停用狀態的文字；3) placeholder 文字；4) 按鈕文字。確保達到 WCAG AA 標準（4.5:1 for 正常文字，3:1 for 大文字）",
+    "severity": "Medium"
+  },
+  {
+    "step": 18,
+    "location": "帳號刪除功能",
+    "heuristic": "Error Prevention",
+    "description": "界面中沒有明顯的刪除或移除帳號選項。More 按鈕可能包含此功能但未實作",
+    "recommendation": "在 More 選單中添加「移除帳號」選項；實作兩步驟確認流程：1) 顯示確認模態框說明後果；2) 要求用戶輸入帳號名稱確認；3) 顯示成功/錯誤反饋；4) 對於 Primary 帳號，提醒需要先設定其他帳號為 Primary",
+    "severity": "Medium"
+  },
+  {
+    "step": 19,
+    "location": "帳號計數顯示",
+    "heuristic": "Recognition Rather Than Recall",
+    "description": "每個平台群組顯示帳號數量（如 2/∞、1/1、2/2），這很好。但頂部的「5 accounts」總數與頁面標題「1/4」不一致且意義不明",
+    "recommendation": "澄清「1/4」的含義（可能是計劃限制？）；如果與帳號數量無關，考慮移除或添加說明；確保所有計數指標都有明確的上下文",
+    "severity": "Low"
+  },
+  {
+    "step": 20,
+    "location": "響應式設計",
+    "heuristic": "Seek Universal Usability",
+    "description": "界面在桌面瀏覽器中運作良好，但未測試移動端、平板或不同螢幕尺寸的表現",
+    "recommendation": "測試並優化響應式設計：1) 移動端（320px - 480px）；2) 平板（768px - 1024px）；3) 大螢幕（>1920px）；確保表格在小螢幕上可滾動或調整為卡片佈局；測試側邊欄在移動端的行為",
+    "severity": "High"
+  }
+]
