@@ -56,7 +56,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
   
   return (
     <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
-      {/* 高亮背景層 - 置於內容下方，3 秒後淡出 */}
+      {/* 高亮外框 - 不改變底色，3 秒後淡出 */}
       <motion.div
         initial={false}
         animate={{
@@ -65,10 +65,10 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         transition={{
           duration: isHighlighted ? 0.2 : 0.5,
         }}
-        className="absolute inset-0 z-0 bg-emerald-50/80 rounded-md pointer-events-none"
+        className="absolute inset-0 z-0 rounded-md border-2 border-[#1A929F] pointer-events-none"
       />
       <div
-        className={`relative z-10 grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm transition-colors duration-200 cursor-pointer ${isHighlighted ? 'bg-transparent' : baseBg} hover:bg-gray-50/50 ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
+        className={`relative z-10 grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm transition-colors duration-200 cursor-pointer ${baseBg} hover:bg-gray-50/50 ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
       >
         {/* 垂直虛線 - 從開合箭頭下方延伸 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (

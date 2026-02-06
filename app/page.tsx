@@ -112,13 +112,13 @@ export default function SocialAccountsSettings() {
   });
 
   return (
-    <div className={`flex min-h-screen ${
+    <div className={`flex h-screen overflow-hidden ${
       layoutStyle === 'new' 
         ? 'bg-[#F5F7FA]' 
         : 'bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100'
     }`}>
-      {/* 左側導航欄 */}
-      <aside className={`${
+      {/* 左側導航欄 - 固定不隨內容捲動 */}
+      <aside className={`flex-shrink-0 h-screen overflow-y-auto ${
         layoutStyle === 'new'
           ? 'bg-transparent'
           : 'bg-white/80 backdrop-blur-xl border-r border-gray-200/50 shadow-lg'
@@ -227,10 +227,10 @@ export default function SocialAccountsSettings() {
         </div>
       </aside>
 
-      {/* 主要內容區 */}
-      <div className={`flex-1 flex flex-col ${layoutStyle === 'new' ? '' : 'overflow-hidden'}`}>
-        {/* 頂部導航條 */}
-        <header className={`px-6 py-4 ${
+      {/* 主要內容區 - 僅內容區域捲動 */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        {/* 頂部導航條 - 固定不隨內容捲動 */}
+        <header className={`flex-shrink-0 px-6 py-4 ${
           layoutStyle === 'new'
             ? 'bg-transparent'
             : 'bg-white/70 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
@@ -271,7 +271,7 @@ export default function SocialAccountsSettings() {
         
         {/* 白色卡片容器 - 僅在 new 版型時包裝主要內容 */}
         <main 
-          className={`flex-1 flex flex-col overflow-hidden ${
+          className={`flex-1 flex flex-col min-h-0 overflow-hidden ${
             layoutStyle === 'new'
               ? 'bg-white rounded-[18px] mx-4 mt-0 mb-8'
               : ''
@@ -343,9 +343,7 @@ export default function SocialAccountsSettings() {
               
               {/* Table Body - 分組卡片，0 帳號的平台不顯示 */}
               <div className="space-y-3">
-              {(['twitter', 'linkedin', 'instagram'] as Platform[])
-                .filter((platform) => getAccountsByPlatform(platform).length > 0)
-                .map((platform) => {
+              {platformsWithAccounts.map((platform) => {
                 const config = platformConfig[platform];
                 const Icon = config.icon;
                 const platformAccounts = getAccountsByPlatform(platform);
