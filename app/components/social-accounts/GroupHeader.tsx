@@ -56,8 +56,8 @@ export function GroupHeader({
           </div>
           <div className="flex items-center gap-2.5">
             <span className="text-sm font-semibold text-gray-900">{name}</span>
-            <span className={`inline-flex items-center ${layoutStyle === 'new' ? 'px-2.5 py-1 bg-gray-200 rounded-md text-[10px]' : 'px-2.5 py-1 bg-gray-100 rounded-md text-[10px]'} font-medium text-gray-600`}>
-              {accountCount} / {maxAccounts} Connected
+            <span className={`inline-flex items-center gap-0.5 ${layoutStyle === 'new' ? 'px-2.5 py-1 bg-gray-200 rounded-md text-[10px]' : 'px-2.5 py-1 bg-gray-100 rounded-md text-[10px]'} font-medium text-gray-600`}>
+              {accountCount} / {maxAccounts === '∞' ? <span className="text-sm leading-none">∞</span> : maxAccounts} Connected
             </span>
             {expiredCount > 0 && (
               <div className={`flex items-center gap-1 ${layoutStyle === 'new' ? 'px-2.5 py-1 border border-red-300 bg-white rounded-md' : 'px-2 py-0.5 bg-orange-50 rounded-full'}`}>

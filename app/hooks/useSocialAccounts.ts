@@ -1,18 +1,20 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { SocialAccount, Platform } from '@/app/types/social-accounts';
-import { EXPANSION_PLATFORMS } from '@/app/constants/platform-config';
+import { EXPANSION_PLATFORMS, platformConfig } from '@/app/constants/platform-config';
 
 // 用於產生唯一 ID
 let accountIdCounter = 100;
 
-// 產生擴充預覽 mock 資料（12 平台、30+ 帳號，資料驅動）
+// 產生擴充預覽 mock 資料（12 平台、30+ 帳號，資料驅動，遵守各平台帳號上限）
 function generateExpansionMockData(): SocialAccount[] {
   const accounts: SocialAccount[] = [];
   let id = 1;
   const statuses: Array<'verified' | 'expired'> = ['verified', 'expired'];
   const syncLabels = ['Just now', '5 minutes ago', '10 minutes ago', '1 hour ago', '2 hours ago'];
   for (const platform of EXPANSION_PLATFORMS) {
-    const count = 1 + Math.floor(((id + platform.charCodeAt(0)) % 5));
+    const rawCount = 1 + Math.floor(((id + platform.charCodeAt(0)) % 5));
+    const max = platformConfig[platform].maxAccounts === Infinity ? 5 : platformConfig[platform].maxAccounts;
+    const count = Math.min(rawCount, max);
     for (let i = 0; i < count; i++) {
       const status = statuses[(id + i) % 2];
       accounts.push({

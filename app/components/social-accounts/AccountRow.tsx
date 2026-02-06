@@ -49,10 +49,10 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
     setReconnecting(false);
   };
   const baseBg = layoutStyle === 'new'
-    ? 'bg-white hover:bg-gray-50/50'
+    ? 'bg-white hover:bg-[#85bac01a]'
     : isExpired
-      ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-100/70'
-      : 'bg-gray-50/80 hover:bg-gray-100/70';
+      ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-200/80'
+      : 'bg-gray-50/80 hover:bg-gray-200/80';
   
   return (
     <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
@@ -65,10 +65,10 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         transition={{
           duration: isHighlighted ? 0.2 : 0.5,
         }}
-        className="absolute inset-0 z-0 rounded-md border-2 border-[#1A929F] pointer-events-none"
+        className={`absolute inset-0 z-0 border-2 border-[#1A929F] pointer-events-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
       />
       <div
-        className={`relative z-10 grid grid-cols-12 gap-6 py-3 rounded-md shadow-sm transition-colors duration-200 cursor-pointer ${baseBg} hover:bg-gray-50/50 ${isLastInGroup && layoutStyle !== 'new' ? 'pb-5' : ''}`}
+        className={`relative z-10 grid grid-cols-12 gap-6 py-3 transition-colors duration-200 cursor-pointer ${baseBg} shadow-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
       >
         {/* 垂直虛線 - 從開合箭頭下方延伸 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (
@@ -92,19 +92,19 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
             layoutStyle === 'new' 
               ? 'bg-[#1A929F]/10 text-[#1A929F]' 
               : 'bg-gray-200 text-gray-700'
-          } flex items-center justify-center ${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} font-semibold flex-shrink-0`}>
+          } flex items-center justify-center text-xs font-semibold flex-shrink-0`}>
             {account.accountName.substring(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <div className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200`}>{account.accountName}</div>
+              <div className="text-sm font-medium text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200">{account.accountName}</div>
               {platform === 'instagram' && account.isPrimary && (
                 <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0">
                   Primary
                 </span>
               )}
             </div>
-            <div className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-400 truncate`}>{account.accountHandle}</div>
+            <div className="text-xs text-gray-400 truncate">{account.accountHandle}</div>
           </div>
         </div>
 
@@ -114,17 +114,17 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
           {account.status === 'verified' ? (
             <>
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-600"></div>
-              <span className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-emerald-600`}>Connected</span>
+              <span className="text-sm font-medium text-emerald-600">Connected</span>
             </>
           ) : (
             <>
               <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
-              <span className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-red-600`}>Expired</span>
+              <span className="text-sm font-medium text-red-600">Expired</span>
             </>
           )}
         </div>
         {/* Last Synced 作為輔助資訊 */}
-        <span className={`${layoutStyle === 'new' ? 'text-xs' : 'text-[10px]'} text-gray-400`}>
+        <span className="text-xs text-gray-400">
           {account.lastSynced || '-'}
         </span>
       </div>
@@ -132,8 +132,8 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
       {/* Followers Column */}
       <div className="col-span-3 flex items-center">
         <div className="flex items-center gap-1.5">
-          <Users className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-3.5 h-3.5'} text-gray-400`} />
-          <span className={`${layoutStyle === 'new' ? 'text-sm' : 'text-xs'} font-medium text-gray-900`}>
+          <Users className="w-4 h-4 text-gray-400" />
+          <span className="text-sm font-medium text-gray-900">
             {account.followers 
               ? account.followers >= 1000000 
                 ? (account.followers / 1000000).toFixed(1) + 'M'

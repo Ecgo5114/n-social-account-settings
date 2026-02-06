@@ -112,7 +112,7 @@ export default function SocialAccountsSettings() {
   });
 
   return (
-    <div className={`flex h-screen overflow-hidden ${
+    <div className={`flex h-screen overflow-hidden relative ${
       layoutStyle === 'new' 
         ? 'bg-[#F5F7FA]' 
         : 'bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100'
@@ -125,10 +125,9 @@ export default function SocialAccountsSettings() {
       } flex flex-col transition-all duration-300 ${
         sidebarExpanded ? 'w-[240px]' : 'w-[72px]'
       }`}>
-        {/* Logo 和切換按鈕 */}
+        {/* Logo（current）／Logo + 收合按鈕（new theme：展開時 logo 旁，收合時 logo 下） */}
         <div className="px-6 pt-6 pb-10">
-          <div className={`flex items-center ${sidebarExpanded ? 'justify-between' : 'flex-col gap-4'}`}>
-            {/* Logo */}
+          <div className={`flex ${layoutStyle === 'new' ? (sidebarExpanded ? 'flex-row justify-between items-center w-full' : 'flex-col items-center gap-4') : `items-center ${sidebarExpanded ? 'justify-start' : 'justify-center'}`}`}>
             <div className={`flex items-center ${sidebarExpanded ? '' : 'justify-center'}`}>
               {sidebarExpanded ? (
                 <Image 
@@ -152,20 +151,20 @@ export default function SocialAccountsSettings() {
                 </div>
               )}
             </div>
-            
-            {/* 開合按鈕 */}
-            <button
-              onClick={() => setSidebarExpanded(!sidebarExpanded)}
-              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-              title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-              aria-label={sidebarExpanded ? "收起側邊欄" : "展開側邊欄"}
-            >
-              {sidebarExpanded ? (
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-gray-600" />
-              )}
-            </button>
+            {layoutStyle === 'new' && (
+              <button
+                onClick={() => setSidebarExpanded(!sidebarExpanded)}
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors cursor-pointer flex-shrink-0"
+                title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
+                aria-label={sidebarExpanded ? "收起側邊欄" : "展開側邊欄"}
+              >
+                {sidebarExpanded ? (
+                  <ChevronLeft className="w-4 h-4 text-gray-600" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                )}
+              </button>
+            )}
           </div>
         </div>
         
@@ -227,10 +226,28 @@ export default function SocialAccountsSettings() {
         </div>
       </aside>
 
+      {/* 收合按鈕（current theme）：淡灰邊框圓形，置於頁首與左選單邊界 */}
+      {layoutStyle === 'current' && (
+        <button
+          onClick={() => setSidebarExpanded(!sidebarExpanded)}
+          className={`absolute z-20 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
+            sidebarExpanded ? 'left-[240px]' : 'left-[72px]'
+          } -translate-x-1/2 top-6`}
+          title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
+          aria-label={sidebarExpanded ? "收起側邊欄" : "展開側邊欄"}
+        >
+          {sidebarExpanded ? (
+            <ChevronLeft className="w-4 h-4 text-gray-600" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+          )}
+        </button>
+      )}
+
       {/* 主要內容區 - 僅內容區域捲動 */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className={`flex-1 flex flex-col min-h-0 overflow-hidden ${layoutStyle === 'new' ? 'pl-3' : ''}`}>
         {/* 頂部導航條 - 固定不隨內容捲動 */}
-        <header className={`flex-shrink-0 px-6 py-4 ${
+        <header className={`flex-shrink-0 py-4 ${layoutStyle === 'new' ? 'pl-0 pr-6' : 'px-6'} ${
           layoutStyle === 'new'
             ? 'bg-transparent'
             : 'bg-white/70 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
@@ -273,7 +290,7 @@ export default function SocialAccountsSettings() {
         <main 
           className={`flex-1 flex flex-col min-h-0 overflow-hidden ${
             layoutStyle === 'new'
-              ? 'bg-white rounded-[18px] mx-4 mt-0 mb-8'
+              ? 'bg-white rounded-[18px] mr-4 mt-0 mb-8'
               : ''
           }`}
           style={layoutStyle === 'new' ? {
@@ -287,7 +304,7 @@ export default function SocialAccountsSettings() {
             {/* 表格標題區 */}
             <div className="mb-4 flex items-start justify-between">
               <div className="flex flex-col gap-0.5">
-                <h2 className="text-xl font-bold text-gray-900">Social Account</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Social Account</h2>
                 <span className="text-xs text-gray-400">{accounts.length} connected accounts</span>
               </div>
 
