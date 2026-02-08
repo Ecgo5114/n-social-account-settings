@@ -50,13 +50,12 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
   };
   const baseBg = layoutStyle === 'new'
     ? 'bg-white hover:bg-[#85bac01a]'
-    : isExpired
-      ? 'bg-red-50/40 bg-gray-50/80 hover:bg-gray-200/80'
-      : 'bg-gray-50/80 hover:bg-gray-200/80';
-  
+    : 'bg-gray-50/80 hover:bg-[#EDF3F5]';
+  const highlightBg = isHighlighted ? 'bg-[#E5F4F5]' : baseBg;
+
   return (
     <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
-      {/* 高亮外框 - 不改變底色，3 秒後淡出 */}
+      {/* 高亮：整條 1px 邊框 + 實色淺底，置頂顯示以確保 new theme 可見 */}
       <motion.div
         initial={false}
         animate={{
@@ -65,10 +64,12 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         transition={{
           duration: isHighlighted ? 0.2 : 0.5,
         }}
-        className={`absolute inset-0 z-0 border-2 border-[#1A929F] pointer-events-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
+        className={`absolute inset-0 z-20 pointer-events-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'} ${
+          isHighlighted ? 'border border-[#3DB5C0]' : ''
+        }`}
       />
       <div
-        className={`relative z-10 grid grid-cols-12 gap-6 py-3 transition-colors duration-200 cursor-pointer ${baseBg} shadow-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
+        className={`relative z-10 grid grid-cols-12 gap-6 py-3 transition-colors duration-200 cursor-pointer ${highlightBg} shadow-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
       >
         {/* 垂直虛線 - 從開合箭頭下方延伸 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (

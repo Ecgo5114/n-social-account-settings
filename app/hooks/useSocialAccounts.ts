@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import type { SocialAccount, Platform } from '@/app/types/social-accounts';
 import { EXPANSION_PLATFORMS, platformConfig } from '@/app/constants/platform-config';
 
 // Demo 情境類型（與 LayoutStyleToggle 同步）
-export type DemoScenario = 'normal' | 'multiple-expired' | 'linkedin-switch' | 'empty';
+export type DemoScenario = 'normal' | 'multiple-expired' | 'expansion-preview' | 'empty' | 'add-account-error';
 
 // 用於產生唯一 ID
 let accountIdCounter = 100;
@@ -36,69 +36,62 @@ function generateExpansionMockData(): SocialAccount[] {
   return accounts;
 }
 
-// 一般情境樣本數據
-const INITIAL_ACCOUNTS: SocialAccount[] = [
-  { id: '1', platform: 'twitter', accountName: 'TechCorp Official', accountHandle: '@techcorp', status: 'verified', followers: 125400, lastSynced: 'Just now' },
-  { id: '2', platform: 'twitter', accountName: 'TechCorp Support', accountHandle: '@techcorp_help', status: 'verified', followers: 43200, lastSynced: '5 minutes ago' },
-  { id: '3', platform: 'linkedin', accountName: 'TechCorp Inc.', accountHandle: 'techcorp-inc', status: 'verified', linkedinType: 'Company Page', followers: 89500, lastSynced: '10 minutes ago' },
-  { id: '4', platform: 'instagram', accountName: 'TechCorp', accountHandle: '@techcorp.official', status: 'expired', isPrimary: true, followers: 234800, lastSynced: '2 hours ago' },
-  { id: '5', platform: 'instagram', accountName: 'TechCorp Careers', accountHandle: '@techcorp.careers', status: 'verified', isPrimary: false, followers: 12300, lastSynced: 'Just now' },
-];
+// 一般情境：5 筆帳號，全部 verified
+function getNormalAccounts(): SocialAccount[] {
+  return [
+    { id: '1', platform: 'twitter', accountName: 'TechCorp Official', accountHandle: '@techcorp', status: 'verified', followers: 125400, lastSynced: 'Just now' },
+    { id: '2', platform: 'twitter', accountName: 'TechCorp Support', accountHandle: '@techcorp_help', status: 'verified', followers: 43200, lastSynced: '5 minutes ago' },
+    { id: '3', platform: 'linkedin', accountName: 'TechCorp Inc.', accountHandle: 'techcorp-inc', status: 'verified', linkedinType: 'Company Page', followers: 89500, lastSynced: '10 minutes ago' },
+    { id: '4', platform: 'instagram', accountName: 'TechCorp', accountHandle: '@techcorp.official', status: 'verified', isPrimary: true, followers: 234800, lastSynced: 'Just now' },
+    { id: '5', platform: 'instagram', accountName: 'TechCorp Careers', accountHandle: '@techcorp.careers', status: 'verified', isPrimary: false, followers: 12300, lastSynced: 'Just now' },
+  ];
+}
 
-// 多個過期帳號情境
+// 多個過期帳號情境：5 Twitter (1 過期), 1 LinkedIn (正常), 2 Instagram (1 過期)
 function getMultipleExpiredAccounts(): SocialAccount[] {
-  return INITIAL_ACCOUNTS.map((acc, i) => ({
-    ...acc,
-    id: `exp-${acc.id}`,
-    status: (i >= 2 ? 'expired' : acc.status) as 'verified' | 'expired',
-    lastSynced: i >= 2 ? '2 hours ago' : acc.lastSynced,
-  }));
+  return [
+    { id: 'me-1', platform: 'twitter', accountName: 'TechCorp Official', accountHandle: '@techcorp', status: 'verified', followers: 125400, lastSynced: 'Just now' },
+    { id: 'me-2', platform: 'twitter', accountName: 'TechCorp Support', accountHandle: '@techcorp_help', status: 'verified', followers: 43200, lastSynced: '5 minutes ago' },
+    { id: 'me-3', platform: 'twitter', accountName: 'TechCorp News', accountHandle: '@techcorp_news', status: 'verified', followers: 21000, lastSynced: '1 hour ago' },
+    { id: 'me-4', platform: 'twitter', accountName: 'TechCorp Dev', accountHandle: '@techcorp_dev', status: 'verified', followers: 8500, lastSynced: '10 minutes ago' },
+    { id: 'me-5', platform: 'twitter', accountName: 'TechCorp HQ', accountHandle: '@techcorp_hq', status: 'expired', followers: 98000, lastSynced: '2 hours ago' },
+    { id: 'me-6', platform: 'linkedin', accountName: 'TechCorp Inc.', accountHandle: 'techcorp-inc', status: 'verified', linkedinType: 'Company Page', followers: 89500, lastSynced: '10 minutes ago' },
+    { id: 'me-7', platform: 'instagram', accountName: 'TechCorp', accountHandle: '@techcorp.official', status: 'expired', isPrimary: true, followers: 234800, lastSynced: '2 hours ago' },
+    { id: 'me-8', platform: 'instagram', accountName: 'TechCorp Careers', accountHandle: '@techcorp.careers', status: 'verified', isPrimary: false, followers: 12300, lastSynced: 'Just now' },
+  ];
 }
 
 // 取得各情境的初始資料（互不影響）
-function getInitialDataForScenario(
-  scenario: DemoScenario,
-  extensibilityMode: 'standard' | 'expansion-preview'
-): SocialAccount[] {
+function getInitialDataForScenario(scenario: DemoScenario): SocialAccount[] {
   switch (scenario) {
     case 'empty':
       return [];
     case 'multiple-expired':
       return getMultipleExpiredAccounts();
-    case 'linkedin-switch':
-      return [...INITIAL_ACCOUNTS];
+    case 'expansion-preview':
+      return generateExpansionMockData();
+    case 'add-account-error':
+      return getNormalAccounts(); // 先與一般情境相同，功能待實作
     case 'normal':
     default:
-      return extensibilityMode === 'expansion-preview' ? generateExpansionMockData() : [...INITIAL_ACCOUNTS];
+      return getNormalAccounts();
   }
 }
 
-export type ExtensibilityMode = 'standard' | 'expansion-preview';
-
-const ALL_SCENARIOS: DemoScenario[] = ['normal', 'multiple-expired', 'linkedin-switch', 'empty'];
+const ALL_SCENARIOS: DemoScenario[] = ['normal', 'multiple-expired', 'expansion-preview', 'empty', 'add-account-error'];
 
 /**
  * 管理社群帳號數據和操作的 Hook
  * 各 Demo 情境的資料獨立，切換情境不會互相影響
  */
-export function useSocialAccounts(
-  extensibilityMode: ExtensibilityMode = 'standard',
-  demoScenario: DemoScenario = 'normal'
-) {
+export function useSocialAccounts(demoScenario: DemoScenario = 'normal') {
   const [accountsByScenario, setAccountsByScenario] = useState<Record<DemoScenario, SocialAccount[]>>(() =>
     Object.fromEntries(
-      ALL_SCENARIOS.map((s) => [s, getInitialDataForScenario(s, extensibilityMode)])
+      ALL_SCENARIOS.map((s) => [s, getInitialDataForScenario(s)])
     ) as Record<DemoScenario, SocialAccount[]>
   );
 
   const accounts = accountsByScenario[demoScenario];
-
-  useEffect(() => {
-    setAccountsByScenario((prev) => ({
-      ...prev,
-      normal: getInitialDataForScenario('normal', extensibilityMode),
-    }));
-  }, [extensibilityMode]);
 
   const [showSwitchModal, setShowSwitchModal] = useState(false);
 

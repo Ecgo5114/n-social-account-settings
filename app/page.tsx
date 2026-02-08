@@ -22,6 +22,8 @@ import { AddAccountModal } from './components/social-accounts/AddAccountModal';
 import { EmptyState } from './components/social-accounts/EmptyState';
 import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
 import { Toast } from './components/social-accounts/Toast';
+import { ADD_ACCOUNT_ERROR_OPTIONS } from './constants/add-account-errors';
+import type { AddAccountErrorType } from './constants/add-account-errors';
 import { DisconnectConfirmationModal } from './components/social-accounts/DisconnectConfirmationModal';
 
 export default function SocialAccountsSettings() {
@@ -55,6 +57,7 @@ export default function SocialAccountsSettings() {
   const [connectingPlatform, setConnectingPlatform] = useState<Platform | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
   const [highlightedAccountId, setHighlightedAccountId] = useState<string | null>(null);
   const accountRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -65,11 +68,27 @@ export default function SocialAccountsSettings() {
     if (accountToDisconnect) {
       deleteAccount(accountToDisconnect.id);
       setAccountToDisconnect(null);
+      setToastVariant('success');
       setToastMessage('Account disconnected successfully.');
       setToastVisible(true);
       setTimeout(() => setToastVisible(false), 4000);
     }
   }, [accountToDisconnect, deleteAccount]);
+
+  // 新增帳號錯誤情境：選擇錯誤類型 → 模擬串聯 → 回到 Add Account 步驟一 + 錯誤 toast
+  const handleSelectErrorType = useCallback(async (errorType: AddAccountErrorType, platform: Platform) => {
+    const opt = ADD_ACCOUNT_ERROR_OPTIONS.find((o) => o.value === errorType);
+    if (!opt) return;
+    setShowAddModal(false);
+    setConnectingPlatform(platform);
+    await new Promise((r) => setTimeout(r, 1500));
+    setConnectingPlatform(null);
+    setShowAddModal(true); // 回到 Add Account 彈窗步驟一，讓使用者可重新選擇
+    setToastVariant('error');
+    setToastMessage(opt.message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 5000);
+  }, []);
 
   // 選擇平台後：模擬串聯 → 新增帳號 → 成功反饋
   const handleSelectPlatform = useCallback(async (platform: Platform) => {
@@ -79,6 +98,7 @@ export default function SocialAccountsSettings() {
     const newAccount = await executeAddAccount(platform);
     setConnectingPlatform(null);
     expandPlatform(platform);
+    setToastVariant('success');
     setToastVisible(true);
     setToastMessage(`Successfully connected to ${platformConfig[platform].name}`);
     setHighlightedAccountId(newAccount.id);
@@ -478,6 +498,7 @@ export default function SocialAccountsSettings() {
                                   onDisconnectRequest={() => setAccountToDisconnect(account)}
                                   onReconnect={async () => {
                                     await reconnectAccount(account.id);
+                                    setToastVariant('success');
                                     setToastMessage('Account reconnected successfully.');
                                     setToastVisible(true);
                                     setTimeout(() => setToastVisible(false), 4000);
@@ -560,6 +581,7 @@ export default function SocialAccountsSettings() {
                         onDisconnectRequest={() => setAccountToDisconnect(row.account!)}
                         onReconnect={async () => {
                           await reconnectAccount(row.account!.id);
+                          setToastVariant('success');
                           setToastMessage('Account reconnected successfully.');
                           setToastVisible(true);
                           setTimeout(() => setToastVisible(false), 4000);
@@ -589,13 +611,15 @@ export default function SocialAccountsSettings() {
         onSelectPlatform={handleSelectPlatform}
         platforms={platforms}
         getAccountCount={(p) => getAccountsByPlatform(p).length}
+        isErrorDemoMode={demoScenario === 'add-account-error'}
+        onSelectErrorType={handleSelectErrorType}
       />
 
       {/* Connection Loading Overlay */}
       <ConnectionLoadingOverlay isVisible={!!connectingPlatform} platform={connectingPlatform} />
 
-      {/* Success Toast (新增帳號 / 解除連接) */}
-      <Toast message={toastMessage} isVisible={toastVisible} />
+      {/* Toast (新增帳號 / 解除連接 / 錯誤提示) */}
+      <Toast message={toastMessage} isVisible={toastVisible} variant={toastVariant} />
 
       {/* Disconnect 確認 Modal */}
       <DisconnectConfirmationModal

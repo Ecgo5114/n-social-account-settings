@@ -4,16 +4,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Settings2 } from 'lucide-react';
 import type { LayoutStyle } from '@/app/types/social-accounts';
 
-export type DemoScenario = 'normal' | 'multiple-expired' | 'linkedin-switch' | 'empty';
-export type ExtensibilityMode = 'standard' | 'expansion-preview';
+export type DemoScenario = 'normal' | 'multiple-expired' | 'expansion-preview' | 'empty' | 'add-account-error';
 
 interface LayoutStyleToggleProps {
   currentStyle: LayoutStyle;
   onStyleChange?: (style: LayoutStyle) => void;
   demoScenario?: DemoScenario;
   onDemoScenarioChange?: (scenario: DemoScenario) => void;
-  extensibilityMode?: ExtensibilityMode;
-  onExtensibilityChange?: (mode: ExtensibilityMode) => void;
 }
 
 const STYLE_OPTIONS: { value: LayoutStyle; label: string }[] = [
@@ -24,12 +21,8 @@ const STYLE_OPTIONS: { value: LayoutStyle; label: string }[] = [
 const DEMO_SCENARIO_OPTIONS: { value: DemoScenario; label: string }[] = [
   { value: 'normal', label: '一般情境' },
   { value: 'multiple-expired', label: '多個過期帳號' },
-  { value: 'linkedin-switch', label: 'LinkedIn 切換限制' },
   { value: 'empty', label: '空狀態' },
-];
-
-const EXTENSIBILITY_OPTIONS: { value: ExtensibilityMode; label: string }[] = [
-  { value: 'standard', label: '標準' },
+  { value: 'add-account-error', label: '新增帳號錯誤' },
   { value: 'expansion-preview', label: '擴充預覽' },
 ];
 
@@ -42,8 +35,6 @@ export function LayoutStyleToggle({
   onStyleChange,
   demoScenario = 'normal',
   onDemoScenarioChange,
-  extensibilityMode = 'standard',
-  onExtensibilityChange,
 }: LayoutStyleToggleProps) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -104,26 +95,6 @@ export function LayoutStyleToggle({
                     demoScenario === opt.value
                       ? 'bg-[#1A929F]/10 text-[#1A929F]'
                       : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 3. 擴充性模擬 */}
-          <div>
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">擴充性模擬</div>
-            <div className="flex gap-1">
-              {EXTENSIBILITY_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => { onExtensibilityChange?.(opt.value); setOpen(false); }}
-                  className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
-                    extensibilityMode === opt.value
-                      ? 'bg-[#1A929F] text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
                   {opt.label}
