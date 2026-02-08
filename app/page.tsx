@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { 
   Twitter, Linkedin, Instagram, AlertCircle, Edit2, MoreHorizontal, CheckCircle2, Plus,
   LayoutDashboard, Share2, Calendar, TrendingUp, CreditCard, FileText, Users, Settings,
-  Lock, HelpCircle, Search, Bell, User, ChevronLeft, ChevronRight, Menu, ChevronDown, ChevronUp, XCircle, RefreshCw
+  Lock, HelpCircle, Search, Bell, User, ChevronLeft, ChevronRight, Menu, ChevronDown, ChevronUp, XCircle, RefreshCw, Eye
 } from 'lucide-react';
 import { useTheme } from './components/ThemeProvider';
 import type { Platform, SocialAccount, LayoutStyle } from './types/social-accounts';
@@ -17,7 +17,7 @@ import { usePlatformExpanded } from './hooks/usePlatformExpanded';
 import { NavItem } from './components/navigation/NavItem';
 import { GroupHeader } from './components/social-accounts/GroupHeader';
 import { AccountRow } from './components/social-accounts/AccountRow';
-import { LayoutStyleToggle, type DemoScenario, type ExtensibilityMode } from './components/social-accounts/LayoutStyleToggle';
+import { LayoutStyleToggle, type DemoScenario } from './components/social-accounts/LayoutStyleToggle';
 import { AddAccountModal } from './components/social-accounts/AddAccountModal';
 import { EmptyState } from './components/social-accounts/EmptyState';
 import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
@@ -25,7 +25,6 @@ import { Toast } from './components/social-accounts/Toast';
 import { DisconnectConfirmationModal } from './components/social-accounts/DisconnectConfirmationModal';
 
 export default function SocialAccountsSettings() {
-  const [extensibilityMode, setExtensibilityMode] = useState<ExtensibilityMode>('standard');
   const { theme } = useTheme();
   
   const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
@@ -44,7 +43,7 @@ export default function SocialAccountsSettings() {
     reconnectAccount,
     deleteAccount,
     setShowSwitchModal,
-  } = useSocialAccounts(extensibilityMode, demoScenario);
+  } = useSocialAccounts(demoScenario);
 
   // UI 狀態（不屬於業務邏輯的 UI 狀態）
   const [activeTab, setActiveTab] = useState('social');
@@ -86,13 +85,61 @@ export default function SocialAccountsSettings() {
     requestAnimationFrame(() => {
       accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-    setTimeout(() => setHighlightedAccountId(null), 3500);
+    setTimeout(() => setHighlightedAccountId(null), 2000);
     setTimeout(() => setToastVisible(false), 4000);
   }, [executeAddAccount, expandPlatform]);
 
-  // 動態平台列表：擴充預覽 = 12 平台，標準 = 3 平台
-  const platforms = (extensibilityMode === 'expansion-preview' ? EXPANSION_PLATFORMS : STANDARD_PLATFORMS) as Platform[];
+  // 動態平台列表：擴充預覽情境 = 12 平台，其餘 = 3 平台
+  const platforms = (demoScenario === 'expansion-preview' ? EXPANSION_PLATFORMS : STANDARD_PLATFORMS) as Platform[];
   const platformsWithAccounts = platforms.filter((p) => getAccountsByPlatform(p).length > 0);
+
+  // 過期帳號與橫條文案（表格顯示順序）
+  const expiredBannerData = (() => {
+    const expiredByPlatform: { platform: Platform; count: number }[] = [];
+    for (const platform of platformsWithAccounts) {
+      const platformAccounts = getAccountsByPlatform(platform);
+      const count = platformAccounts.filter((a) => a.status === 'expired').length;
+      if (count > 0) {
+        expiredByPlatform.push({ platform, count });
+      }
+    }
+    if (expiredByPlatform.length === 0) return null;
+    const totalExpired = expiredByPlatform.reduce((s, p) => s + p.count, 0);
+    const firstItem = expiredByPlatform[0];
+    const firstExpiredAccount = getAccountsByPlatform(firstItem.platform).find((a) => a.status === 'expired')!;
+    const platformNames = expiredByPlatform.map((p) => platformConfig[p.platform].name);
+    let title: string;
+    let description: string;
+    let buttonText: string;
+    if (expiredByPlatform.length === 1) {
+      title = `Reconnect ${platformNames[0]}`;
+      description = firstItem.count === 1
+        ? 'Connection expired. Reconnect to restore syncing.'
+        : `${firstItem.count} connections expired. Reconnect to restore syncing.`;
+      buttonText = firstItem.count === 1 ? 'View account' : 'View accounts';
+    } else {
+      if (platformNames.length <= 3) {
+        title = `Reconnect ${platformNames.slice(0, -1).join(', ')} and ${platformNames[platformNames.length - 1]}`;
+      } else {
+        title = `Reconnect ${platformNames[0]}, ${platformNames[1]}, and ${platformNames.length - 2} more`;
+      }
+      description = 'Connections expired. Reconnect each to restore syncing.';
+      buttonText = 'View accounts';
+    }
+    return { firstExpiredAccount, firstPlatform: firstItem.platform, title, description, buttonText };
+  })();
+  const expiredCount = accounts.filter((a) => a.status === 'expired').length;
+
+  const handleViewExpiredIssue = useCallback(() => {
+    if (!expiredBannerData) return;
+    const { firstExpiredAccount, firstPlatform } = expiredBannerData;
+    expandPlatform(firstPlatform);
+    setHighlightedAccountId(firstExpiredAccount.id);
+    requestAnimationFrame(() => {
+      accountRowRefs.current[firstExpiredAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    setTimeout(() => setHighlightedAccountId(null), 2000);
+  }, [expiredBannerData, expandPlatform]);
 
   // 構建表格數據（按平台分組）
   const tableData: Array<{ type: 'group' | 'account', platform?: Platform, account?: SocialAccount, isLastInGroup?: boolean, isLastOfAllGroups?: boolean }> = [];
@@ -313,14 +360,7 @@ export default function SocialAccountsSettings() {
                 <span className="text-xs text-gray-400">{accounts.length} connected accounts</span>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm border border-gray-200/80 rounded-lg hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-sm font-medium text-gray-700 cursor-pointer">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                  Filters
-                </button>
-                
+              <div className="flex items-center">
                 <button
                   onClick={() => setShowAddModal(true)}
                   className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer hover:opacity-90"
@@ -331,8 +371,28 @@ export default function SocialAccountsSettings() {
               </div>
             </div>
 
+          {/* 過期帳號錯誤提示橫條 */}
+          {expiredCount >= 1 && expiredBannerData && (
+            <div className="mb-4 flex items-center gap-4 px-4 py-3 rounded-lg bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/60 shadow-sm">
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-red-800">{expiredBannerData.title}</div>
+                <div className="text-sm text-red-600 mt-0.5">{expiredBannerData.description}</div>
+              </div>
+              <button
+                onClick={handleViewExpiredIssue}
+                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
+              >
+                <Eye className="w-4 h-4" />
+                {expiredBannerData.buttonText}
+              </button>
+            </div>
+          )}
+
           {/* 快速跳轉：平台圖示列（僅擴充預覽且有多平台時顯示） */}
-          {extensibilityMode === 'expansion-preview' && platformsWithAccounts.length > 1 && (
+          {demoScenario === 'expansion-preview' && platformsWithAccounts.length > 1 && (
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
               {platformsWithAccounts.map((platform) => {
                 const cfg = platformConfig[platform];
@@ -470,7 +530,7 @@ export default function SocialAccountsSettings() {
                       expanded={platformExpanded[row.platform!]}
                       onToggle={() => togglePlatformExpanded(row.platform!)}
                       layoutStyle={layoutStyle}
-                      scrollTargetId={extensibilityMode === 'expansion-preview' ? `platform-group-${row.platform}` : undefined}
+                      scrollTargetId={demoScenario === 'expansion-preview' ? `platform-group-${row.platform}` : undefined}
                     />
                   );
                 }
@@ -580,8 +640,6 @@ export default function SocialAccountsSettings() {
         onStyleChange={setLayoutStyle}
         demoScenario={demoScenario}
         onDemoScenarioChange={setDemoScenario}
-        extensibilityMode={extensibilityMode}
-        onExtensibilityChange={setExtensibilityMode}
       />
     </div>
   );
