@@ -19,6 +19,7 @@ import { GroupHeader } from './components/social-accounts/GroupHeader';
 import { AccountRow } from './components/social-accounts/AccountRow';
 import { LayoutStyleToggle, type DemoScenario, type ExtensibilityMode } from './components/social-accounts/LayoutStyleToggle';
 import { AddAccountModal } from './components/social-accounts/AddAccountModal';
+import { EmptyState } from './components/social-accounts/EmptyState';
 import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
 import { Toast } from './components/social-accounts/Toast';
 import { DisconnectConfirmationModal } from './components/social-accounts/DisconnectConfirmationModal';
@@ -27,7 +28,11 @@ export default function SocialAccountsSettings() {
   const [extensibilityMode, setExtensibilityMode] = useState<ExtensibilityMode>('standard');
   const { theme } = useTheme();
   
-  // 使用自定義 Hooks 管理業務邏輯
+  const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
+  const [demoScenario, setDemoScenario] = useState<DemoScenario>('normal');
+  const { platformExpanded, togglePlatformExpanded, expandPlatform } = usePlatformExpanded();
+
+  // 使用自定義 Hooks（傳入 demoScenario，各情境資料獨立）
   const {
     accounts,
     showSwitchModal,
@@ -39,11 +44,7 @@ export default function SocialAccountsSettings() {
     reconnectAccount,
     deleteAccount,
     setShowSwitchModal,
-  } = useSocialAccounts(extensibilityMode);
-  
-  const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
-  const [demoScenario, setDemoScenario] = useState<DemoScenario>('normal');
-  const { platformExpanded, togglePlatformExpanded, expandPlatform } = usePlatformExpanded();
+  } = useSocialAccounts(extensibilityMode, demoScenario);
 
   // UI 狀態（不屬於業務邏輯的 UI 狀態）
   const [activeTab, setActiveTab] = useState('social');
@@ -301,6 +302,10 @@ export default function SocialAccountsSettings() {
         {/* 內容區域 */}
         <div className={`flex-1 overflow-auto px-10 ${layoutStyle === 'new' ? 'py-8' : 'py-6'}`}>
           <div className="max-w-[1400px] mx-auto">
+            {accounts.length === 0 ? (
+              <EmptyState onAddPlatform={() => setShowAddModal(true)} />
+            ) : (
+            <>
             {/* 表格標題區 */}
             <div className="mb-4 flex items-start justify-between">
               <div className="flex flex-col gap-0.5">
@@ -510,6 +515,8 @@ export default function SocialAccountsSettings() {
               </div>
             </div>
           )}
+            </>
+            )}
           </div>
         </div>
         </main>

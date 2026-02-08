@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Settings2 } from 'lucide-react';
 import type { LayoutStyle } from '@/app/types/social-accounts';
 
-export type DemoScenario = 'normal' | 'multiple-expired' | 'linkedin-switch';
+export type DemoScenario = 'normal' | 'multiple-expired' | 'linkedin-switch' | 'empty';
 export type ExtensibilityMode = 'standard' | 'expansion-preview';
 
 interface LayoutStyleToggleProps {
@@ -25,6 +25,7 @@ const DEMO_SCENARIO_OPTIONS: { value: DemoScenario; label: string }[] = [
   { value: 'normal', label: '一般情境' },
   { value: 'multiple-expired', label: '多個過期帳號' },
   { value: 'linkedin-switch', label: 'LinkedIn 切換限制' },
+  { value: 'empty', label: '空狀態' },
 ];
 
 const EXTENSIBILITY_OPTIONS: { value: ExtensibilityMode; label: string }[] = [
