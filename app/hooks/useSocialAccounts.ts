@@ -12,20 +12,18 @@ let accountIdCounter = 100;
 function generateExpansionMockData(): SocialAccount[] {
   const accounts: SocialAccount[] = [];
   let id = 1;
-  const statuses: Array<'verified' | 'expired'> = ['verified', 'expired'];
   const syncLabels = ['Just now', '5 minutes ago', '10 minutes ago', '1 hour ago', '2 hours ago'];
   for (const platform of EXPANSION_PLATFORMS) {
     const rawCount = 1 + Math.floor(((id + platform.charCodeAt(0)) % 5));
     const max = platformConfig[platform].maxAccounts === Infinity ? 5 : platformConfig[platform].maxAccounts;
     const count = Math.min(rawCount, max);
     for (let i = 0; i < count; i++) {
-      const status = statuses[(id + i) % 2];
       accounts.push({
         id: String(id++),
         platform,
         accountName: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Account ${i + 1}`,
         accountHandle: platform === 'twitter' ? `@${platform}_${i + 1}` : `${platform}-account-${i + 1}`,
-        status,
+        status: 'verified',
         followers: Math.floor(Math.random() * 500000) + 1000,
         lastSynced: syncLabels[(id + i) % syncLabels.length],
         ...(platform === 'instagram' && i === 0 ? { isPrimary: true } : {}),

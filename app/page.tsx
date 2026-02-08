@@ -427,6 +427,7 @@ export default function SocialAccountsSettings() {
           {/* 快速跳轉：平台圖示列（僅擴充預覽且有多平台時顯示） */}
           {demoScenario === 'expansion-preview' && platformsWithAccounts.length > 1 && (
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+              <span className="text-sm text-gray-500 mr-1">Jump to</span>
               {platformsWithAccounts.map((platform) => {
                 const cfg = platformConfig[platform];
                 const Icon = cfg.icon;
