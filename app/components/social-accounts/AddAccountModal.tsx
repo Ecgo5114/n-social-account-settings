@@ -67,7 +67,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
 
         {showErrorStep ? (
           <>
-            <p className="text-sm text-gray-500 mb-4">Choose an error to simulate</p>
+            <p className="text-sm text-gray-500 mb-4">選擇一個要模擬的錯誤狀態（此畫面僅方便示意流程）</p>
             <div className="space-y-2 max-h-[60vh] overflow-y-auto">
               {ADD_ACCOUNT_ERROR_OPTIONS.map((opt) => (
                 <button

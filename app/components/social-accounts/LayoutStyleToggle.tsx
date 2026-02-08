@@ -23,7 +23,7 @@ const DEMO_SCENARIO_OPTIONS: { value: DemoScenario; label: string }[] = [
   { value: 'multiple-expired', label: '多個過期帳號' },
   { value: 'empty', label: '空狀態' },
   { value: 'add-account-error', label: '新增帳號錯誤' },
-  { value: 'expansion-preview', label: '擴充預覽' },
+  { value: 'expansion-preview', label: '未來擴充平台預覽' },
 ];
 
 /**

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { 
@@ -60,6 +60,19 @@ export default function SocialAccountsSettings() {
   const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
   const [highlightedAccountId, setHighlightedAccountId] = useState<string | null>(null);
   const accountRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleToastHide = useCallback((delayMs: number) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastVisible(false);
+      toastTimeoutRef.current = null;
+    }, delayMs);
+  }, []);
+
+  useEffect(() => () => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+  }, []);
 
   // Disconnect 確認 Modal
   const [accountToDisconnect, setAccountToDisconnect] = useState<SocialAccount | null>(null);
@@ -71,9 +84,9 @@ export default function SocialAccountsSettings() {
       setToastVariant('success');
       setToastMessage('Account disconnected successfully.');
       setToastVisible(true);
-      setTimeout(() => setToastVisible(false), 4000);
+      scheduleToastHide(4000);
     }
-  }, [accountToDisconnect, deleteAccount]);
+  }, [accountToDisconnect, deleteAccount, scheduleToastHide]);
 
   // 新增帳號錯誤情境：選擇錯誤類型 → 模擬串聯 → 回到 Add Account 步驟一 + 錯誤 toast
   const handleSelectErrorType = useCallback(async (errorType: AddAccountErrorType, platform: Platform) => {
@@ -87,8 +100,8 @@ export default function SocialAccountsSettings() {
     setToastVariant('error');
     setToastMessage(opt.message);
     setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 5000);
-  }, []);
+    scheduleToastHide(5000);
+  }, [scheduleToastHide]);
 
   // 選擇平台後：模擬串聯 → 新增帳號 → 成功反饋
   const handleSelectPlatform = useCallback(async (platform: Platform) => {
@@ -106,8 +119,8 @@ export default function SocialAccountsSettings() {
       accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     setTimeout(() => setHighlightedAccountId(null), 2000);
-    setTimeout(() => setToastVisible(false), 4000);
-  }, [executeAddAccount, expandPlatform]);
+    scheduleToastHide(4000);
+  }, [executeAddAccount, expandPlatform, scheduleToastHide]);
 
   // 動態平台列表：擴充預覽情境 = 12 平台，其餘 = 3 平台
   const platforms = (demoScenario === 'expansion-preview' ? EXPANSION_PLATFORMS : STANDARD_PLATFORMS) as Platform[];
@@ -501,7 +514,7 @@ export default function SocialAccountsSettings() {
                                     setToastVariant('success');
                                     setToastMessage('Account reconnected successfully.');
                                     setToastVisible(true);
-                                    setTimeout(() => setToastVisible(false), 4000);
+                                    scheduleToastHide(4000);
                                   }}
                                 />
                               </motion.div>
@@ -584,7 +597,7 @@ export default function SocialAccountsSettings() {
                           setToastVariant('success');
                           setToastMessage('Account reconnected successfully.');
                           setToastVisible(true);
-                          setTimeout(() => setToastVisible(false), 4000);
+                          scheduleToastHide(4000);
                         }}
                       />
                     </motion.div>
