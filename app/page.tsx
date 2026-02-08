@@ -645,8 +645,8 @@ export default function SocialAccountsSettings() {
 
       {/* Switch Account Modal */}
       {showSwitchModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200">
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200" onClick={() => setShowSwitchModal(false)}>
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Switch LinkedIn Account?</h3>
             <p className="text-sm text-gray-600 leading-relaxed mb-6">
               You can only connect one LinkedIn company page at a time. To add a new account, you must remove the existing one first.

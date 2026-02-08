@@ -42,7 +42,7 @@ export function EmptyState({ onAddPlatform }: EmptyStateProps) {
         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer hover:opacity-90"
       >
         <Plus className="w-4 h-4" />
-        Add Platform
+        Add Account
       </button>
     </div>
   );

@@ -24,8 +24,9 @@ export function DisconnectConfirmationModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="disconnect-modal-title"
+      onClick={onCancel}
     >
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50">
+      <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
         <h3 id="disconnect-modal-title" className="text-lg font-bold text-gray-900 mb-2">
           Disconnect Account?
         </h3>

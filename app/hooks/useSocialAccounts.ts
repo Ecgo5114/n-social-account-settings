@@ -34,14 +34,13 @@ function generateExpansionMockData(): SocialAccount[] {
   return accounts;
 }
 
-// 一般情境：5 筆帳號，全部 verified
+// 一般情境：4 筆帳號（2 Twitter, 1 LinkedIn, 1 Instagram），全部 verified
 function getNormalAccounts(): SocialAccount[] {
   return [
     { id: '1', platform: 'twitter', accountName: 'TechCorp Official', accountHandle: '@techcorp', status: 'verified', followers: 125400, lastSynced: 'Just now' },
     { id: '2', platform: 'twitter', accountName: 'TechCorp Support', accountHandle: '@techcorp_help', status: 'verified', followers: 43200, lastSynced: '5 minutes ago' },
     { id: '3', platform: 'linkedin', accountName: 'TechCorp Inc.', accountHandle: 'techcorp-inc', status: 'verified', linkedinType: 'Company Page', followers: 89500, lastSynced: '10 minutes ago' },
     { id: '4', platform: 'instagram', accountName: 'TechCorp', accountHandle: '@techcorp.official', status: 'verified', isPrimary: true, followers: 234800, lastSynced: 'Just now' },
-    { id: '5', platform: 'instagram', accountName: 'TechCorp Careers', accountHandle: '@techcorp.careers', status: 'verified', isPrimary: false, followers: 12300, lastSynced: 'Just now' },
   ];
 }
 
@@ -143,19 +142,24 @@ export function useSocialAccounts(demoScenario: DemoScenario = 'normal') {
 
   const executeAddAccount = useCallback(
     (platform: Platform): Promise<SocialAccount> => {
-      const newAccount: SocialAccount = {
-        id: `new-${++accountIdCounter}`,
-        platform,
-        accountName: `New ${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
-        accountHandle: platform === 'twitter' ? '@new_account' : 'new-account',
-        status: 'verified',
-        followers: Math.floor(Math.random() * 50000) + 1000,
-        lastSynced: 'Just now',
-        isPrimary: false,
-      };
-      if (platform === 'linkedin') newAccount.linkedinType = 'Company Page';
-      updateCurrentScenario((prev) => [...prev, newAccount]);
-      return Promise.resolve(newAccount);
+      let newAccount: SocialAccount;
+      updateCurrentScenario((prev) => {
+        const existingIgCount = prev.filter((a) => a.platform === 'instagram').length;
+        const isFirstInstagram = platform === 'instagram' && existingIgCount === 0;
+        newAccount = {
+          id: `new-${++accountIdCounter}`,
+          platform,
+          accountName: `New ${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
+          accountHandle: platform === 'twitter' ? '@new_account' : 'new-account',
+          status: 'verified',
+          followers: Math.floor(Math.random() * 50000) + 1000,
+          lastSynced: 'Just now',
+          isPrimary: isFirstInstagram,
+        };
+        if (platform === 'linkedin') newAccount.linkedinType = 'Company Page';
+        return [...prev, newAccount];
+      });
+      return Promise.resolve(newAccount!);
     },
     [updateCurrentScenario]
   );
