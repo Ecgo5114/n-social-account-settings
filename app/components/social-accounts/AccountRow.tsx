@@ -99,8 +99,14 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
             <div className="flex items-center gap-1.5">
               <div className="text-sm font-medium text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200">{account.accountName}</div>
               {platform === 'instagram' && account.isPrimary && (
-                <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0">
-                  Primary
+                <span className="relative group/primary inline-flex">
+                  <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0 cursor-help">
+                    Primary
+                  </span>
+                  <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/primary:opacity-100 pointer-events-none transition-opacity z-50 w-[280px] text-center leading-relaxed">
+                    This account is used as the default for scheduling posts and will be featured first in your analytics reports.
+                    <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
+                  </span>
                 </span>
               )}
             </div>
@@ -174,7 +180,9 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
             </span>
           }
           platform={platform}
+          accountHandle={account.accountHandle}
           isPrimary={account.isPrimary}
+          isExpired={account.status === 'expired'}
           onDisconnect={onDisconnectRequest}
           onReconnect={onReconnect}
           onSetPrimary={platform === 'instagram' && !singleInstagram ? () => onTogglePrimary(account.id) : undefined}
