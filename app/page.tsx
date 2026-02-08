@@ -118,8 +118,8 @@ export default function SocialAccountsSettings() {
     requestAnimationFrame(() => {
       accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-    setTimeout(() => setHighlightedAccountId(null), 2000);
-    scheduleToastHide(4000);
+    setTimeout(() => setHighlightedAccountId(null), 3000);
+    scheduleToastHide(3000);
   }, [executeAddAccount, expandPlatform, scheduleToastHide]);
 
   // 動態平台列表：擴充預覽情境 = 12 平台，其餘 = 3 平台
@@ -432,15 +432,19 @@ export default function SocialAccountsSettings() {
                 const cfg = platformConfig[platform];
                 const Icon = cfg.icon;
                 return (
-                  <button
-                    key={platform}
-                    onClick={() => document.getElementById(`platform-group-${platform}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
-                    title={cfg.name}
-                    aria-label={`跳轉至 ${cfg.name}`}
-                  >
-                    <Icon className={`w-4 h-4 ${cfg.color}`} />
-                  </button>
+                  <span key={platform} className="relative group/jumpto">
+                    <button
+                      onClick={() => document.getElementById(`platform-group-${platform}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                      className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
+                      aria-label={`跳轉至 ${cfg.name}`}
+                    >
+                      <Icon className={`w-4 h-4 ${cfg.color}`} />
+                    </button>
+                    <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/jumpto:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                      {cfg.name}
+                      <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
+                    </span>
+                  </span>
                 );
               })}
             </div>
@@ -638,7 +642,22 @@ export default function SocialAccountsSettings() {
       {/* Disconnect 確認 Modal */}
       <DisconnectConfirmationModal
         isOpen={!!accountToDisconnect}
-        accountName={accountToDisconnect?.accountName}
+        account={accountToDisconnect}
+        scheduledPostsCount={
+          accountToDisconnect
+            ? (() => {
+                const platformAccounts = getAccountsByPlatform(accountToDisconnect.platform);
+                const idx = platformAccounts.findIndex((a) => a.id === accountToDisconnect.id);
+                return idx === 1 ? 3 : undefined;
+              })()
+            : undefined
+        }
+        isInstagramPrimary={
+          !!accountToDisconnect &&
+          accountToDisconnect.platform === 'instagram' &&
+          accountToDisconnect.isPrimary === true &&
+          getAccountsByPlatform('instagram').length >= 2
+        }
         onConfirm={handleDisconnectConfirm}
         onCancel={() => setAccountToDisconnect(null)}
       />
@@ -654,7 +673,7 @@ export default function SocialAccountsSettings() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSwitchModal(false)}
-                className="flex-1 px-5 py-3 bg-white/60 backdrop-blur-sm border-2 border-gray-200/80 rounded-xl hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-sm font-semibold text-gray-700 cursor-pointer"
+                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700 cursor-pointer"
               >
                 Cancel
               </button>
@@ -663,7 +682,7 @@ export default function SocialAccountsSettings() {
                   console.log('Switching LinkedIn account');
                   setShowSwitchModal(false);
                 }}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-xl hover:shadow-xl hover:shadow-[#1A929F]/30 transition-all duration-200 text-sm font-bold shadow-lg cursor-pointer"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg hover:opacity-90 transition-all duration-200 text-sm font-semibold cursor-pointer"
               >
                 Switch Account
               </button>

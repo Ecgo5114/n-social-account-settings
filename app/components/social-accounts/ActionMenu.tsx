@@ -121,11 +121,11 @@ export function ActionMenu(props: ActionMenuProps) {
                 <Star className="w-4 h-4 text-gray-500" />
                 Set as Primary
               </span>
-              <span className="relative flex-shrink-0 text-gray-400 cursor-help ml-2">
+              <span className="relative flex-shrink-0 text-gray-400 cursor-help ml-2 inline-flex justify-center">
                 <HelpCircle className="w-3.5 h-3.5" />
-                <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap">
+                <span className="absolute right-0 bottom-full mb-2 left-auto px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap text-left">
                   Make this your default account for new posts.
-                  <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
+                  <span className="absolute top-full right-2 left-auto border-[6px] border-transparent border-t-gray-900" />
                 </span>
               </span>
             </button>

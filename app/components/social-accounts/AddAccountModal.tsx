@@ -36,7 +36,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
     const count = getAccountCount(platform);
     const max = cfg.maxAccounts === Infinity ? Infinity : cfg.maxAccounts;
     const maxDisplay = cfg.maxAccounts === Infinity ? '∞' : cfg.maxAccounts;
-    const disabled = !isErrorDemoMode && count >= max;
+    const disabled = count >= max;
     const message = disabled ? 'Maximum reached' : '';
     return { platform, disabled, message, count, maxDisplay };
   });
@@ -113,7 +113,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
                     </div>
                     <div className={'font-semibold ' + (disabled ? 'text-gray-500' : 'text-gray-900')}>{config.name}</div>
                     <span className={'inline-flex items-center gap-0.5 px-2.5 py-1 rounded-md text-[10px] font-medium ' + (disabled ? 'bg-gray-200 text-gray-500' : 'bg-gray-100 text-gray-600')}>
-                      {count} / {maxDisplay === '∞' ? <span className="text-sm leading-none">∞</span> : maxDisplay} Connected
+                      {count} / {maxDisplay === '∞' ? <span className="text-base leading-none">∞</span> : maxDisplay} Connected
                     </span>
                     {message ? <div className="text-xs font-medium text-gray-500">{message}</div> : null}
                   </button>
