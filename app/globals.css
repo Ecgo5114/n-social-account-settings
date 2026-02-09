@@ -5,6 +5,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Nitra Design System - CSS Variables ──────────────────────────── */
+:root {
+  /* Brand / Primary */
+  --nitra-primary: #1a929f;
+  --nitra-primary-dark: #168995;
+  --nitra-primary-tint: rgba(26, 146, 159, 0.1);
+  --nitra-primary-focus-ring: rgba(26, 146, 159, 0.3);
+
+  /* Surfaces */
+  --nitra-bg-new: #f5f7fa;
+  --nitra-bg-highlight: #e5f4f5;
+  --nitra-table-header: #edf0f4;
+  --nitra-row-hover: rgba(133, 186, 192, 0.1);
+
+  /* Accents */
+  --nitra-highlight-border: #3db5c0;
+  --nitra-success: #10b981;
+  --nitra-error: #ef4444;
+
+  /* Layout */
+  --nitra-sidebar-expanded: 240px;
+  --nitra-sidebar-collapsed: 72px;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
