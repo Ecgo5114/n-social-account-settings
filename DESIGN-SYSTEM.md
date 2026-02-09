@@ -25,7 +25,8 @@
 |-------|-----|------|
 | `nitra-primary` | `#1A929F` | 主按鈕、連結、焦點、Active 狀態 |
 | `nitra-primary-dark` | `#168995` | Hover、漸層深色 |
-| `nitra-primary-tint` | `#85bac01a` | 帳號列 Hover 背景、淺色背景 |
+| `nitra-primary-darker` | `#147d89` | 漸層更深色（如 LayoutStyleToggle 圓形按鈕） |
+| `nitra-primary-tint` | `#85bac01a` | 帳號列 Hover 背景 (New theme)、淺色背景 |
 
 ### 語意色
 
@@ -33,8 +34,9 @@
 |-------|-----|------|
 | `nitra-highlight-bg` | `#E5F4F5` | 新增帳號成功高亮背景 |
 | `nitra-highlight-border` | `#3DB5C0` | 高亮邊框 |
-| `nitra-success` | `#10b981` | 成功 Toast、Badge |
-| `nitra-error` | `#ef4444` | 錯誤 Toast、Reconnect 按鈕 |
+| `nitra-success` | `#10b981` | 成功 Toast、Badge、Connected 狀態 |
+| `nitra-success-bg` | `#ecfdf5` | 成功 Badge 背景、選取平台 hover |
+| `nitra-error` | `#ef4444` | 錯誤 Toast、Reconnect 按鈕、Disconnect |
 
 ### 背景與表面
 
@@ -42,6 +44,7 @@
 |-------|-----|------|
 | `nitra-bg-new` | `#F5F7FA` | New theme 頁面背景 |
 | `nitra-table-header` | `#EDF0F4` | 表格標頭背景 (Current theme) |
+| `nitra-row-hover` | `#EDF3F5` | 帳號列 Hover 背景 (Current theme) |
 
 ### 平台品牌色 (Platform Config)
 
@@ -54,9 +57,27 @@
 
 ## 排版 (Typography)
 
-- **字體**：Arial, Helvetica, sans-serif（body 預設）
-- **Tailwind 字體**：`font-inter`, `font-nunito`, `font-varela`（可選）
-- **字級**：依 Tailwind 預設 (`text-xs` ~ `text-2xl`)
+### 全域字體
+
+- **字體**：Instrument Sans（Google Fonts）
+- **Mono**：代碼顯示時使用 `font-mono`（ui-monospace 等）
+
+### 語義化字級 (Semantic Typography Scale)
+
+| Token | 字級 | 行高 | 用途 | 字重 |
+|-------|------|------|------|------|
+| `text-h1` | 24px | 32px | 主標題 | font-bold |
+| `text-h2` | 20px | 28px | 次標題 | font-bold |
+| `text-h3` | 18px | 28px | 區塊標題 | font-bold |
+| `text-h4` | 14px | 20px | 小標題 | font-bold |
+| `text-body-large` | 16px | 24px | 大內文 | 預設 |
+| `text-body-base` | 14px | 20px | 核心內文（基準） | 預設 / font-medium |
+| `text-body-small` | 12px | 16px | 小內文、輔助 | font-medium |
+| `text-detail` | 10px | 15px | 標籤、計數、微小字 | font-medium / font-bold |
+
+### 字重規範
+
+僅使用 **Regular (400)**、**Medium (500)**、**Bold (700)**。
 
 ---
 
@@ -130,9 +151,13 @@ style={{ backgroundColor: colors.primary }}
 | 變數 | 用途 |
 |------|------|
 | `--nitra-primary` | 主色 |
-| `--nitra-primary-tint` | 主色淺色 |
+| `--nitra-primary-dark` | 主色深色 |
+| `--nitra-primary-tint` | 主色淺色 (rgba) |
 | `--nitra-bg-new` | New theme 背景 |
 | `--nitra-bg-highlight` | 高亮背景 |
+| `--nitra-table-header` | 表格標頭 |
+| `--nitra-row-hover` | Current theme 帳號列 hover |
+| `--nitra-success` / `--nitra-error` | 語意色 |
 | `--nitra-sidebar-expanded` | 側邊欄展開寬度 |
 
 ---
@@ -142,25 +167,26 @@ style={{ backgroundColor: colors.primary }}
 ### 主按鈕 (Primary Button)
 
 ```
-bg-[#1A929F] hover:opacity-90 text-white rounded-lg px-4 py-2 text-sm font-semibold
+bg-nitra-primary hover:opacity-90 text-white rounded-lg px-4 py-2 text-sm font-semibold
 ```
-或使用 `bg-nitra-primary`。
+
+或使用 design-tokens 的 `tw.btnPrimary`。
 
 ### 搜尋框 Focus
 
 ```
-focus:ring-2 focus:ring-[#1A929F]/30 focus:border-[#1A929F]
+focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary
 ```
 
 ### 帳號列 Hover
 
-- **New theme**：`hover:bg-[#85bac01a]`
-- **Current theme**：`hover:bg-[#EDF3F5]`
+- **New theme**：`hover:bg-nitra-primary-tint`
+- **Current theme**：`hover:bg-nitra-row-hover`
 
 ### 高亮帳號列（新增成功）
 
 ```
-bg-[#E5F4F5] border border-[#3DB5C0]
+bg-nitra-highlight-bg border border-nitra-highlight-border
 ```
 
 ---
@@ -169,7 +195,7 @@ bg-[#E5F4F5] border border-[#3DB5C0]
 
 | 項目 | Current theme | New theme |
 |------|---------------|-----------|
-| 頁面背景 | `from-gray-50 via-slate-50 to-gray-100` | `#F5F7FA` |
+| 頁面背景 | `from-gray-50 via-gray-50 to-gray-100` | `bg-nitra-bg-new` |
 | 主內容區 | 無外框 | 白色卡片 `rounded-[18px]` + 陰影 |
 | 側邊欄 | 毛玻璃 `bg-white/80 backdrop-blur-xl` | 透明 `bg-transparent` |
 | 帳號群組 | 虛線樹狀結構 | 卡片群組 `bg-gray-100/50 rounded-lg` |

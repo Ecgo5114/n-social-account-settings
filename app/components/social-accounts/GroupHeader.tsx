@@ -55,14 +55,14 @@ export function GroupHeader({
             <Icon className={`${layoutStyle === 'new' ? 'w-[18px] h-[18px]' : 'w-4 h-4'} ${color}`} />
           </div>
           <div className="flex items-center gap-2.5">
-            <span className="text-sm font-semibold text-gray-900">{name}</span>
-            <span className={`inline-flex items-center gap-0.5 ${layoutStyle === 'new' ? 'px-2.5 py-1 bg-gray-200 rounded-md text-[10px]' : 'px-2.5 py-1 bg-gray-100 rounded-md text-[10px]'} font-medium text-gray-600`}>
+            <span className="text-body-base font-bold text-gray-900">{name}</span>
+            <span className={`inline-flex items-center gap-0.5 ${layoutStyle === 'new' ? 'px-2.5 py-1 bg-gray-200 rounded-md text-detail' : 'px-2.5 py-1 bg-gray-100 rounded-md text-detail'} font-medium text-gray-600`}>
               {accountCount} / {maxAccounts === '∞' ? <span className="text-base leading-none">∞</span> : maxAccounts} Connected
             </span>
             {expiredCount > 0 && (
               <div className="flex items-center gap-1 px-2.5 py-1 border border-red-300 bg-red-50 rounded-md">
                 <AlertCircle className="w-3 h-3 text-red-600" />
-                <span className="text-[10px] text-red-600 font-medium">
+                <span className="text-detail text-red-600 font-medium">
                   {expiredCount} {expiredCount === 1 ? 'issue' : 'issues'} pending
                 </span>
               </div>

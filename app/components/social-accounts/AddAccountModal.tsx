@@ -53,7 +53,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
             )}
-            <h2 id="add-account-modal-title" className="text-lg font-bold text-gray-900">
+            <h2 id="add-account-modal-title" className="text-h3 font-bold text-gray-900">
               {showErrorStep ? `Simulate error: ${selectedPlatform ? platformConfig[selectedPlatform].name : ''}` : 'Choose Platform'}
             </h2>
           </div>
@@ -64,7 +64,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
 
         {showErrorStep ? (
           <>
-            <p className="text-sm text-gray-500 mb-4">選擇一個要模擬的錯誤狀態（此畫面僅方便示意流程）</p>
+            <p className="text-body-base text-gray-500 mb-4">選擇一個要模擬的錯誤狀態（此畫面僅方便示意流程）</p>
             <div className="space-y-2 max-h-[60vh] overflow-y-auto">
               {ADD_ACCOUNT_ERROR_OPTIONS.map((opt) => (
                 <button
@@ -73,11 +73,11 @@ export function AddAccountModal(props: AddAccountModalProps) {
                   className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 bg-white hover:border-red-300 hover:bg-red-50/50 transition-all duration-200 text-left cursor-pointer"
                 >
                   <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-red-600 text-xs font-semibold">!</span>
+                    <span className="text-red-600 text-body-small font-bold">!</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900">{opt.label}</div>
-                    <div className="text-xs text-gray-500 mt-0.5 line-clamp-2">{opt.message}</div>
+                    <div className="text-body-small text-gray-500 mt-0.5 line-clamp-2">{opt.message}</div>
                   </div>
                 </button>
               ))}
@@ -85,7 +85,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
           </>
         ) : (
           <>
-            <p className="text-sm text-gray-500 mb-4">Connect your social media accounts to automate content publishing.</p>
+            <p className="text-body-base text-gray-500 mb-4">Connect your social media accounts to automate content publishing.</p>
             <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
               {platformItems.map(({ platform, disabled, message, count, maxDisplay }) => {
                 const config = platformConfig[platform];
@@ -100,7 +100,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
                 };
                 const btnClass = disabled
                   ? 'bg-gray-100 border-gray-300 cursor-not-allowed opacity-60'
-                  : 'bg-white border-gray-200 hover:border-[#1A929F] hover:bg-emerald-50/30 cursor-pointer';
+                  : 'bg-white border-gray-200 hover:border-nitra-primary hover:bg-nitra-success-bg/50 cursor-pointer';
                 return (
                   <button
                     key={platform}
@@ -112,10 +112,10 @@ export function AddAccountModal(props: AddAccountModalProps) {
                       <Icon className={'w-6 h-6 ' + (disabled ? 'text-gray-500' : config.color)} />
                     </div>
                     <div className={'font-semibold ' + (disabled ? 'text-gray-500' : 'text-gray-900')}>{config.name}</div>
-                    <span className={'inline-flex items-center gap-0.5 px-2.5 py-1 rounded-md text-[10px] font-medium ' + (disabled ? 'bg-gray-200 text-gray-500' : 'bg-gray-100 text-gray-600')}>
+                    <span className={'inline-flex items-center gap-0.5 px-2.5 py-1 rounded-md text-detail font-medium ' + (disabled ? 'bg-gray-200 text-gray-500' : 'bg-gray-100 text-gray-600')}>
                       {count} / {maxDisplay === '∞' ? <span className="text-base leading-none">∞</span> : maxDisplay} Connected
                     </span>
-                    {message ? <div className="text-xs font-medium text-gray-500">{message}</div> : null}
+                    {message ? <div className="text-body-small font-medium text-gray-500">{message}</div> : null}
                   </button>
                 );
               })}

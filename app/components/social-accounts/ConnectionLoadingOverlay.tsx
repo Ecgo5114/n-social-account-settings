@@ -24,10 +24,10 @@ export function ConnectionLoadingOverlay({
       aria-busy="true"
     >
       <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl flex flex-col items-center gap-4">
-        <Loader2 className="w-12 h-12 text-[#1A929F] animate-spin" />
+        <Loader2 className="w-12 h-12 text-nitra-primary animate-spin" />
         <div className="text-center">
           <p className="font-semibold text-gray-900">Connecting to {config.name}</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-body-base text-gray-500 mt-1">
             Authorizing with {config.name}...
           </p>
         </div>

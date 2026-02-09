@@ -109,21 +109,21 @@ export function ActionMenu(props: ActionMenuProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="w-full px-4 py-2.5 text-sm text-gray-700 text-left hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2.5"
+              className="w-full px-4 py-2.5 text-body-base text-gray-700 text-left hover:bg-gray-50 transition-colors cursor-pointer flex items-center gap-2.5"
             >
               <ExternalLink className="w-4 h-4 text-gray-500 flex-shrink-0" />
               View on {platformConfig[platform].name.split(' / ')[0]}
             </a>
           )}
           {showSetPrimary && (
-            <button type="button" onClick={handleSetPrimary} className="w-full px-4 py-2.5 text-sm text-gray-700 text-left hover:bg-slate-50 transition-colors cursor-pointer flex items-center group/setprimary">
+            <button type="button" onClick={handleSetPrimary} className="w-full px-4 py-2.5 text-body-base text-gray-700 text-left hover:bg-gray-50 transition-colors cursor-pointer flex items-center group/setprimary">
               <span className="flex items-center gap-2.5">
                 <Star className="w-4 h-4 text-gray-500" />
                 Set as Primary
               </span>
               <span className="relative flex-shrink-0 text-gray-400 cursor-help ml-2 inline-flex justify-center">
                 <HelpCircle className="w-3.5 h-3.5" />
-                <span className="absolute right-0 bottom-full mb-2 left-auto px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap text-left">
+                <span className="absolute right-0 bottom-full mb-2 left-auto px-2 py-1.5 bg-gray-900 text-white text-body-small rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap text-left">
                   Make this your default account for new posts.
                   <span className="absolute top-full right-2 left-auto border-[6px] border-transparent border-t-gray-900" />
                 </span>
@@ -131,7 +131,7 @@ export function ActionMenu(props: ActionMenuProps) {
             </button>
           )}
           {showReconnect && (
-          <button type="button" onClick={handleReconnect} disabled={reconnecting} className="w-full px-4 py-2.5 text-sm text-gray-700 text-left hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2.5 disabled:opacity-70">
+          <button type="button" onClick={handleReconnect} disabled={reconnecting} className="w-full px-4 py-2.5 text-body-base text-gray-700 text-left hover:bg-gray-50 transition-colors cursor-pointer flex items-center gap-2.5 disabled:opacity-70">
             {reconnecting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
@@ -146,7 +146,7 @@ export function ActionMenu(props: ActionMenuProps) {
           </button>
           )}
           <div className="border-t border-gray-200 my-1" />
-          <button type="button" onClick={handleDisconnect} className="w-full px-4 py-2.5 text-sm text-red-500 text-left hover:bg-slate-50 transition-colors cursor-pointer flex items-center gap-2.5">
+          <button type="button" onClick={handleDisconnect} className="w-full px-4 py-2.5 text-body-base text-red-500 text-left hover:bg-gray-50 transition-colors cursor-pointer flex items-center gap-2.5">
             <Link2Off className="w-4 h-4 text-red-500" />
             Disconnect Account
           </button>

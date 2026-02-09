@@ -14,8 +14,8 @@ interface LayoutStyleToggleProps {
 }
 
 const STYLE_OPTIONS: { value: LayoutStyle; label: string }[] = [
-  { value: 'current', label: 'Current' },
-  { value: 'new', label: 'New' },
+  { value: 'new', label: 'Card' },
+  { value: 'current', label: 'GroupTable' },
 ];
 
 const DEMO_SCENARIO_OPTIONS: { value: DemoScenario; label: string }[] = [
@@ -65,15 +65,15 @@ export function LayoutStyleToggle({
         >
           {/* 1. 樣式 */}
           <div className="mb-3">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">樣式</div>
+            <div className="text-detail font-bold text-gray-400 uppercase tracking-wider mb-1.5">樣式</div>
             <div className="flex gap-1">
               {STYLE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => { onStyleChange?.(opt.value); setOpen(false); }}
-                  className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
+                  className={`flex-1 px-3 py-2 text-body-small font-medium rounded-lg transition-colors cursor-pointer text-center ${
                     currentStyle === opt.value
-                      ? 'bg-[#1A929F] text-white'
+                      ? 'bg-nitra-primary text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -85,15 +85,15 @@ export function LayoutStyleToggle({
 
           {/* 2. Demo 情境 */}
           <div className="mb-3">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Demo 情境</div>
+            <div className="text-detail font-bold text-gray-400 uppercase tracking-wider mb-1.5">Demo 情境</div>
             <div className="space-y-1">
               {DEMO_SCENARIO_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => { onDemoScenarioChange?.(opt.value); setOpen(false); }}
-                  className={`w-full px-3 py-2 text-xs font-medium rounded-lg text-left transition-colors cursor-pointer ${
+                  className={`w-full px-3 py-2 text-body-small font-medium rounded-lg text-left transition-colors cursor-pointer ${
                     demoScenario === opt.value
-                      ? 'bg-[#1A929F]/10 text-[#1A929F]'
+                      ? 'bg-nitra-primary/10 text-nitra-primary'
                       : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -108,12 +108,12 @@ export function LayoutStyleToggle({
       <button
         ref={btnRef}
         onClick={() => setOpen((v) => !v)}
-        className="w-9 h-9 bg-gradient-to-br from-[#1A929F] to-[#168995] hover:from-[#168995] hover:to-[#147d89] rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center justify-center group"
+        className="w-9 h-9 bg-gradient-to-br from-nitra-primary to-nitra-primary-dark hover:from-nitra-primary-dark hover:to-nitra-primary-darker rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center justify-center group"
         title="切換樣式與情境"
         aria-label="Toggle style and scenario"
       >
         <Settings2 className="w-4 h-4 text-white" />
-        <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">
+        <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-body-small rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">
           {open ? '關閉選單' : '樣式與情境設定'}
         </div>
       </button>

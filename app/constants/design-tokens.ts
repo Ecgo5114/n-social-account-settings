@@ -27,7 +27,7 @@ export const colors = {
   /** 背景色 - New theme */
   bgNewTheme: '#F5F7FA',
   /** 背景色 - Current theme gradient */
-  bgCurrentTheme: 'from-gray-50 via-slate-50 to-gray-100',
+  bgCurrentTheme: 'from-gray-50 via-gray-50 to-gray-100',
   /** 表格標頭背景 */
   tableHeader: '#EDF0F4',
   /** 帳號列 Hover - Current theme */
@@ -81,9 +81,9 @@ export const transitions = {
 
 export const tw = {
   /** 主按鈕樣式 */
-  btnPrimary: 'bg-[#1A929F] hover:opacity-90 text-white rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
+  btnPrimary: 'bg-nitra-primary hover:opacity-90 text-white rounded-lg px-4 py-2 text-body-base font-bold transition-all duration-200',
   /** 搜尋框 focus */
-  inputFocus: 'focus:ring-2 focus:ring-[#1A929F]/30 focus:border-[#1A929F]',
+  inputFocus: 'focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary',
   /** 帳號列高亮 */
-  rowHighlight: 'bg-[#E5F4F5] border border-[#3DB5C0]',
+  rowHighlight: 'bg-nitra-highlight-bg border border-nitra-highlight-border',
 } as const;

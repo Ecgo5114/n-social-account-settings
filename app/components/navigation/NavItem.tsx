@@ -37,8 +37,8 @@ export function NavItem({
         className={`w-full flex items-center gap-3 ${isSubmenu ? 'pl-11 pr-3 py-2' : 'px-3 py-2.5'} mb-1 rounded-lg transition-all duration-200 cursor-pointer ${
           active
             ? isSubmenu 
-              ? 'bg-[#1A929F] text-white'
-              : 'bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white'
+              ? 'bg-nitra-primary text-white'
+              : 'bg-nitra-primary text-white'
             : isSubmenu
               ? 'text-gray-700 hover:bg-gray-100/80'
               : layoutStyle === 'new'
@@ -50,7 +50,7 @@ export function NavItem({
         {!isSubmenu && <Icon className={`flex-shrink-0 ${iconSize} ${iconColor}`} strokeWidth={strokeWidth} />}
         {expanded && (
           <>
-            <span className={`text-sm font-medium whitespace-nowrap flex-1 text-left ${isSubmenu ? 'text-xs' : ''}`}>{label}</span>
+            <span className={`text-body-base font-medium whitespace-nowrap flex-1 text-left ${isSubmenu ? 'text-body-small' : ''}`}>{label}</span>
             {hasSubmenu && (
               submenuExpanded ? 
                 <ChevronUp className="w-4 h-4" strokeWidth={strokeWidth} /> : 
@@ -62,7 +62,7 @@ export function NavItem({
       
       {/* Tooltip 當收起時顯示 */}
       {!expanded && !isSubmenu && (
-        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white text-body-base rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
           {label}
         </div>
       )}

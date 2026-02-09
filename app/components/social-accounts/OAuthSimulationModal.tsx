@@ -18,13 +18,13 @@ function TwitterOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => voi
       <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-6">
         <SiX className="w-7 h-7 text-black" />
       </div>
-      <h2 className="text-xl font-bold text-white text-center mb-2">Authorize Nitra to access your X account</h2>
+      <h2 className="text-h2 font-bold text-white text-center mb-2">Authorize Nitra to access your X account</h2>
       <p className="text-[15px] text-gray-400 text-center mb-6">
         This will allow Nitra to:
       </p>
       <ul className="w-full space-y-3 mb-6">
         {['Read your profile and tweets', 'Post tweets on your behalf', 'Access your followers and engagement data'].map((item, i) => (
-          <li key={i} className="flex items-center gap-3 text-gray-300 text-sm">
+          <li key={i} className="flex items-center gap-3 text-gray-300 text-body-base">
             <Check className="w-4 h-4 text-white flex-shrink-0" />
             {item}
           </li>
@@ -39,7 +39,7 @@ function TwitterOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => voi
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onCancel(); }}
-          className="w-full py-2 text-gray-400 hover:text-white transition-colors cursor-pointer text-sm"
+          className="w-full py-2 text-gray-400 hover:text-white transition-colors cursor-pointer text-body-base"
         >
           Cancel
         </button>
@@ -56,14 +56,14 @@ function LinkedInOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => vo
           <SiLinkedin className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Nitra</h2>
-          <p className="text-sm text-gray-500">wants to access your LinkedIn profile</p>
+          <h2 className="text-h3 font-bold text-gray-900">Nitra</h2>
+          <p className="text-body-base text-gray-500">wants to access your LinkedIn profile</p>
         </div>
       </div>
-      <p className="text-sm text-gray-600 mb-4">Nitra will be able to:</p>
+      <p className="text-body-base text-gray-600 mb-4">Nitra will be able to:</p>
       <ul className="space-y-3 mb-6">
         {['View your profile and account info', 'Post content on your behalf', 'Manage your company pages (if applicable)'].map((item, i) => (
-          <li key={i} className="flex items-center gap-3 text-gray-700 text-sm">
+          <li key={i} className="flex items-center gap-3 text-gray-700 text-body-base">
             <Check className="w-4 h-4 text-[#0A66C2] flex-shrink-0" />
             {item}
           </li>
@@ -95,13 +95,13 @@ function InstagramOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => v
       }}>
         <Camera className="w-10 h-10 text-white" />
       </div>
-      <h2 className="text-lg font-semibold text-gray-900 text-center mb-1">Continue with Instagram</h2>
-      <p className="text-sm text-gray-600 text-center mb-6">
+      <h2 className="text-h3 font-bold text-gray-900 text-center mb-1">Continue with Instagram</h2>
+      <p className="text-body-base text-gray-600 text-center mb-6">
         Nitra would like to access your Instagram account to post content and view insights.
       </p>
       <ul className="w-full space-y-2.5 mb-6">
         {['View your profile and media', 'Create and manage posts', 'Access basic analytics'].map((item, i) => (
-          <li key={i} className="flex items-center gap-2 text-gray-600 text-sm">
+          <li key={i} className="flex items-center gap-2 text-gray-600 text-body-base">
             <Check className="w-4 h-4 text-gray-500 flex-shrink-0" />
             {item}
           </li>
@@ -117,12 +117,12 @@ function InstagramOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => v
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onCancel(); }}
-          className="w-full py-2 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer text-sm"
+          className="w-full py-2 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer text-body-base"
         >
           Cancel
         </button>
       </div>
-      <p className="text-[10px] text-gray-400 mt-6 text-center">
+      <p className="text-detail text-gray-400 mt-6 text-center">
         By continuing, you agree to Nitra&apos;s Terms and Meta&apos;s Data Policy.
       </p>
     </div>
@@ -191,7 +191,7 @@ export function OAuthSimulationModal(props: OAuthSimulationModalProps) {
             <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
             <span className="w-3 h-3 rounded-full bg-green-500/80" />
           </div>
-          <div className={`flex-1 flex justify-center text-xs ${isTwitter ? 'text-gray-500' : 'text-gray-400'}`}>
+          <div className={`flex-1 flex justify-center text-body-small ${isTwitter ? 'text-gray-500' : 'text-gray-400'}`}>
             {platform === 'twitter' && 'api.x.com'}
             {platform === 'linkedin' && 'www.linkedin.com'}
             {platform === 'instagram' && 'www.facebook.com'}

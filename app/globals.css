@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800&family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -17,7 +16,8 @@
   --nitra-bg-new: #f5f7fa;
   --nitra-bg-highlight: #e5f4f5;
   --nitra-table-header: #edf0f4;
-  --nitra-row-hover: rgba(133, 186, 192, 0.1);
+  --nitra-row-hover: #edf3f5;
+  --nitra-row-hover-new: rgba(133, 186, 192, 0.1);
 
   /* Accents */
   --nitra-highlight-border: #3db5c0;
@@ -30,7 +30,7 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Screen reader only - 無障礙輔助 */

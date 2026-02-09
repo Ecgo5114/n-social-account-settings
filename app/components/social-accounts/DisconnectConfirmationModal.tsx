@@ -43,7 +43,7 @@ export function DisconnectConfirmationModal({
       onClick={onCancel}
     >
       <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
-        <h3 id="disconnect-modal-title" className="text-lg font-bold text-gray-900 mb-4">
+        <h3 id="disconnect-modal-title" className="text-h3 font-bold text-gray-900 mb-4">
           Disconnect {config?.name ?? 'account'}?
         </h3>
 
@@ -51,7 +51,7 @@ export function DisconnectConfirmationModal({
         {account && (
           <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-lg border border-gray-200">
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-[#1A929F]/10 text-[#1A929F] flex items-center justify-center text-sm font-semibold">
+              <div className="w-10 h-10 rounded-full bg-nitra-primary/10 text-nitra-primary flex items-center justify-center text-body-base font-bold">
                 {account.accountName.substring(0, 2).toUpperCase()}
               </div>
               {Icon && (
@@ -61,14 +61,14 @@ export function DisconnectConfirmationModal({
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold text-gray-900 truncate">{account.accountName}</div>
-              <div className="text-xs text-gray-500 truncate">{account.accountHandle}</div>
+              <div className="text-body-base font-bold text-gray-900 truncate">{account.accountName}</div>
+              <div className="text-body-small text-gray-500 truncate">{account.accountHandle}</div>
             </div>
           </div>
         )}
 
         {/* 內文 */}
-        <div className="mb-6 space-y-3 text-sm text-gray-600">
+        <div className="mb-6 space-y-3 text-body-base text-gray-600">
           <div>
             <div className="font-semibold text-gray-900 mb-1">⚠️ What will change</div>
             <ul className="list-disc list-inside space-y-0.5 text-gray-600">
@@ -79,7 +79,7 @@ export function DisconnectConfirmationModal({
                     href="/scheduled-posts"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[#1A929F] hover:underline"
+                    className="inline-flex items-center gap-1 text-nitra-primary hover:underline"
                   >
                     View scheduled
                     <ExternalLink className="w-3.5 h-3.5 inline" />
@@ -103,13 +103,13 @@ export function DisconnectConfirmationModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700 cursor-pointer"
+            className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold cursor-pointer"
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-body-base font-bold cursor-pointer"
           >
             Disconnect account
           </button>

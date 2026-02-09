@@ -35,7 +35,7 @@ export function Toast({ message, isVisible, onDismiss, variant = 'success', auto
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={`pointer-events-auto flex items-center gap-3 px-4 py-3 text-white rounded-lg shadow-lg ${
-              isError ? 'bg-red-600' : 'bg-emerald-600'
+              isError ? 'bg-nitra-error' : 'bg-nitra-success'
             }`}
           >
           {isError ? (
@@ -43,7 +43,7 @@ export function Toast({ message, isVisible, onDismiss, variant = 'success', auto
           ) : (
             <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
           )}
-          <span className="text-sm font-medium">{message}</span>
+          <span className="text-body-base font-medium">{message}</span>
           </motion.div>
         </div>
       )}

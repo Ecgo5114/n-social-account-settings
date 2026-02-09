@@ -30,7 +30,7 @@ import { DisconnectConfirmationModal } from './components/social-accounts/Discon
 export default function SocialAccountsSettings() {
   const { theme } = useTheme();
   
-  const { layoutStyle, setLayoutStyle } = useLayoutStyle('current');
+  const { layoutStyle, setLayoutStyle } = useLayoutStyle('new');
   const [demoScenario, setDemoScenario] = useState<DemoScenario>('normal');
   const { platformExpanded, togglePlatformExpanded, expandPlatform } = usePlatformExpanded();
 
@@ -214,8 +214,8 @@ export default function SocialAccountsSettings() {
   return (
     <div className={`flex h-screen overflow-hidden relative ${
       layoutStyle === 'new' 
-        ? 'bg-[#F5F7FA]' 
-        : 'bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100'
+        ? 'bg-nitra-bg-new' 
+        : 'bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100'
     }`}>
       {/* 左側導航欄 - 固定不隨內容捲動 */}
       <aside className={`flex-shrink-0 h-screen overflow-y-auto ${
@@ -271,7 +271,7 @@ export default function SocialAccountsSettings() {
         {/* 導航項目 */}
         <nav className={`flex-1 ${sidebarExpanded ? 'px-3' : 'px-2'}`}>
           {sidebarExpanded && (
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
+            <div className="text-detail font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
               Main Menu
             </div>
           )}
@@ -317,7 +317,7 @@ export default function SocialAccountsSettings() {
         {/* 底部區域 */}
         <div className={`${sidebarExpanded ? 'px-3' : 'px-2'} pb-4`}>
           {sidebarExpanded && (
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
+            <div className="text-detail font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
               Others
             </div>
           )}
@@ -362,7 +362,7 @@ export default function SocialAccountsSettings() {
                   id="search"
                   type="text"
                   placeholder="Search accounts..."
-                  className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-200/80 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A929F]/30 focus:border-[#1A929F] transition-all duration-200 hover:border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-200/80 rounded-lg text-body-base focus:outline-none focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary transition-all duration-200 hover:border-gray-300"
                 />
               </div>
             </div>
@@ -373,13 +373,13 @@ export default function SocialAccountsSettings() {
                 className="w-9 h-9 rounded-lg hover:bg-white/80 hover:backdrop-blur-sm flex items-center justify-center transition-all duration-200 cursor-pointer hover:shadow-sm"
                 aria-label="Notifications"
               >
-                <Bell className="w-4 h-4 text-gray-600 hover:text-[#1A929F] transition-colors duration-200" />
+                <Bell className="w-4 h-4 text-gray-600 hover:text-nitra-primary transition-colors duration-200" />
               </button>
               <div className="flex items-center gap-3 pl-3 border-l border-gray-200/60">
-                <div className="w-8 h-8 rounded-full bg-[#1A929F]/10 border border-[#1A929F]/20 flex items-center justify-center text-xs font-semibold text-[#1A929F]">EH</div>
+                <div className="w-8 h-8 rounded-full bg-nitra-primary/10 border border-nitra-primary/20 flex items-center justify-center text-body-small font-bold text-nitra-primary">EH</div>
                 <div className="text-left">
-                  <div className="text-xs font-semibold text-gray-900">Echo H</div>
-                  <div className="text-[10px] text-gray-500">Super admin</div>
+                  <div className="text-body-small font-bold text-gray-900">Echo H</div>
+                  <div className="text-detail text-gray-500">Super admin</div>
                 </div>
               </div>
             </div>
@@ -408,14 +408,14 @@ export default function SocialAccountsSettings() {
             {/* 表格標題區 */}
             <div className="mb-4 flex items-start justify-between">
               <div className="flex flex-col gap-0.5">
-                <h2 className="text-2xl font-bold text-gray-900">Social Account</h2>
-                <span className="text-xs text-gray-400">{accounts.length} connected accounts</span>
+                <h2 className="text-h1 font-bold text-gray-900">Social Account</h2>
+                <span className="text-body-small text-gray-400">{accounts.length} connected accounts</span>
               </div>
 
               <div className="flex items-center">
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg transition-all duration-200 text-sm font-semibold cursor-pointer hover:opacity-90"
+                  className="flex items-center gap-2 px-4 py-2 bg-nitra-primary text-white rounded-lg transition-all duration-200 text-body-base font-bold cursor-pointer hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
                   Add Account
@@ -430,12 +430,12 @@ export default function SocialAccountsSettings() {
                 <AlertCircle className="w-5 h-5 text-red-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-red-800">{expiredBannerData.title}</div>
-                <div className="text-sm text-red-600 mt-0.5">{expiredBannerData.description}</div>
+                <div className="font-bold text-red-800">{expiredBannerData.title}</div>
+                <div className="text-body-base text-red-600 mt-0.5">{expiredBannerData.description}</div>
               </div>
               <button
                 onClick={handleViewExpiredIssue}
-                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-body-base font-medium transition-colors cursor-pointer"
               >
                 <Eye className="w-4 h-4" />
                 {expiredBannerData.buttonText}
@@ -446,7 +446,7 @@ export default function SocialAccountsSettings() {
           {/* 快速跳轉：平台圖示列（僅擴充預覽且有多平台時顯示） */}
           {demoScenario === 'expansion-preview' && platformsWithAccounts.length > 1 && (
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500 mr-1">Jump to</span>
+              <span className="text-body-base text-gray-500 mr-1">Jump to</span>
               {platformsWithAccounts.map((platform) => {
                 const cfg = platformConfig[platform];
                 const Icon = cfg.icon;
@@ -459,7 +459,7 @@ export default function SocialAccountsSettings() {
                     >
                       <Icon className={`w-4 h-4 ${cfg.color}`} />
                     </button>
-                    <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/jumpto:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                    <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-body-small rounded opacity-0 group-hover/jumpto:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
                       {cfg.name}
                       <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
                     </span>
@@ -474,9 +474,9 @@ export default function SocialAccountsSettings() {
             <div>
               {/* Table Header - 獨立有圓角，對齊帳號列 */}
               <div className="grid grid-cols-12 gap-6 pl-[46px] pr-3 py-3 bg-gray-100/50 rounded-lg mb-3">
-                <div className="col-span-4 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Account</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-2">Status / Last Synced</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-2">Followers</div>
+                <div className="col-span-4 text-detail font-bold text-gray-500 uppercase tracking-widest">Account</div>
+                <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest pl-2">Status / Last Synced</div>
+                <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest pl-2">Followers</div>
                 <div className="col-span-2"></div>
               </div>
               
@@ -552,10 +552,10 @@ export default function SocialAccountsSettings() {
           ) : (
             <div className="bg-white/70 backdrop-blur-xl border border-gray-200/50 rounded-lg overflow-hidden">
               {/* Table Header */}
-              <div className="grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-200 bg-[#EDF0F4]">
-                <div className="col-span-4 text-[10px] font-semibold text-gray-500 uppercase tracking-widest pl-[22px]">Account</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Status / Last Synced</div>
-                <div className="col-span-3 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Followers</div>
+              <div className="grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-200 bg-nitra-table-header">
+                <div className="col-span-4 text-detail font-bold text-gray-500 uppercase tracking-widest pl-[22px]">Account</div>
+                <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest">Status / Last Synced</div>
+                <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest">Followers</div>
                 <div className="col-span-2"></div>
               </div>
 
@@ -693,14 +693,14 @@ export default function SocialAccountsSettings() {
       {showSwitchModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200" onClick={() => setShowSwitchModal(false)}>
           <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Switch LinkedIn Account?</h3>
-            <p className="text-sm text-gray-600 leading-relaxed mb-6">
+            <h3 className="text-h2 font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Switch LinkedIn Account?</h3>
+            <p className="text-body-base text-gray-600 leading-relaxed mb-6">
               You can only connect one LinkedIn company page at a time. To add a new account, you must remove the existing one first.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSwitchModal(false)}
-                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700 cursor-pointer"
+                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
               >
                 Cancel
               </button>
@@ -709,7 +709,7 @@ export default function SocialAccountsSettings() {
                   console.log('Switching LinkedIn account');
                   setShowSwitchModal(false);
                 }}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-[#1A929F] to-[#1A929F] text-white rounded-lg hover:opacity-90 transition-all duration-200 text-sm font-semibold cursor-pointer"
+                className="flex-1 px-4 py-2 bg-nitra-primary text-white rounded-lg hover:opacity-90 transition-all duration-200 text-body-base font-bold cursor-pointer"
               >
                 Switch Account
               </button>

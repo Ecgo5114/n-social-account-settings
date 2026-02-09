@@ -63,7 +63,7 @@ export const glassmorphismTheme: Theme = {
   name: 'glassmorphism',
   displayName: 'Glassmorphism',
   description: '毛玻璃效果',
-  background: 'bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100',
+  background: 'bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100',
   sidebar: {
     bg: 'bg-white/80 backdrop-blur-xl',
     border: 'border-gray-200/50',
@@ -104,8 +104,8 @@ export const glassmorphismTheme: Theme = {
     shadow: 'shadow-sm',
   },
   font: {
-    family: 'font-nunito',
-    import: "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800&family=Varela+Round&display=swap",
+    family: 'font-sans',
+    import: "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
   },
   borderRadius: {
     sm: 'rounded-lg',
@@ -162,8 +162,8 @@ export const minimalismTheme: Theme = {
     shadow: '',
   },
   font: {
-    family: 'font-inter',
-    import: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
+    family: 'font-sans',
+    import: "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
   },
   borderRadius: {
     sm: 'rounded',
@@ -220,8 +220,8 @@ export const softUITheme: Theme = {
     shadow: 'shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)]',
   },
   font: {
-    family: 'font-nunito',
-    import: "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800&family=Varela+Round&display=swap",
+    family: 'font-sans',
+    import: "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap",
   },
   borderRadius: {
     sm: 'rounded-xl',

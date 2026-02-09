@@ -26,7 +26,7 @@ export default function ThemeSwitcher() {
           >
             {/* 標題與關閉按鈕 */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">選擇設計風格</h3>
+              <h3 className="text-h3 font-bold text-gray-900">選擇設計風格</h3>
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -52,7 +52,7 @@ export default function ThemeSwitcher() {
                   }`}
                 >
                   <div className="font-semibold">{option.label}</div>
-                  <div className={`text-sm ${currentTheme === option.value ? 'text-white/80' : 'text-gray-500'}`}>
+                  <div className={`text-body-base ${currentTheme === option.value ? 'text-white/80' : 'text-gray-500'}`}>
                     {option.description}
                   </div>
                 </button>
@@ -61,7 +61,7 @@ export default function ThemeSwitcher() {
             
             {/* 當前主題提示 */}
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-body-small text-gray-500 text-center">
                 當前: {themeOptions.find(t => t.value === currentTheme)?.label}
               </p>
             </div>

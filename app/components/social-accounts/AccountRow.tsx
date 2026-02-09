@@ -49,9 +49,9 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
     setReconnecting(false);
   };
   const baseBg = layoutStyle === 'new'
-    ? 'bg-white hover:bg-[#85bac01a]'
-    : 'bg-gray-50/80 hover:bg-[#EDF3F5]';
-  const highlightBg = isHighlighted ? 'bg-[#E5F4F5]' : baseBg;
+    ? 'bg-white hover:bg-nitra-primary-tint'
+    : 'bg-gray-50/80 hover:bg-nitra-row-hover';
+  const highlightBg = isHighlighted ? 'bg-nitra-highlight-bg' : baseBg;
 
   return (
     <div ref={ref} className={`relative group ${isLastInGroup && !isLastOfAllGroups && layoutStyle !== 'new' ? 'border-b border-gray-200' : ''}`}>
@@ -65,7 +65,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
           duration: isHighlighted ? 0.2 : 0.5,
         }}
         className={`absolute inset-0 z-20 pointer-events-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'} ${
-          isHighlighted ? 'border border-[#3DB5C0]' : ''
+          isHighlighted ? 'border border-nitra-highlight-border' : ''
         }`}
       />
       <div
@@ -91,27 +91,27 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         <div className={`col-span-4 flex items-center gap-2.5 ${layoutStyle === 'new' ? 'pl-5' : 'pl-[70px]'}`}>
           <div className={`${layoutStyle === 'new' ? 'w-8 h-8' : 'w-7 h-7'} rounded-full ${
             layoutStyle === 'new' 
-              ? 'bg-[#1A929F]/10 text-[#1A929F]' 
+              ? 'bg-nitra-primary/10 text-nitra-primary' 
               : 'bg-gray-200 text-gray-700'
-          } flex items-center justify-center text-xs font-semibold flex-shrink-0`}>
+          } flex items-center justify-center text-body-small font-bold flex-shrink-0`}>
             {account.accountName.substring(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <div className="text-sm font-medium text-gray-900 truncate group-hover:text-[#1A929F] transition-colors duration-200">{account.accountName}</div>
+              <div className="text-body-base font-medium text-gray-900 truncate group-hover:text-nitra-primary transition-colors duration-200">{account.accountName}</div>
               {platform === 'instagram' && account.isPrimary && (
                 <span className="relative group/primary inline-flex">
-                  <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0 cursor-help">
+                  <span className="inline-flex items-center px-2 py-0 rounded-full text-detail font-medium bg-nitra-primary text-white flex-shrink-0 cursor-help">
                     Primary
                   </span>
-                  <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/primary:opacity-100 pointer-events-none transition-opacity z-50 w-[280px] text-center leading-relaxed">
+                  <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-body-small rounded opacity-0 group-hover/primary:opacity-100 pointer-events-none transition-opacity z-50 w-[280px] text-center leading-relaxed">
                     This account is used as the default for scheduling posts and will be featured first in your analytics reports.
                     <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
                   </span>
                 </span>
               )}
             </div>
-            <div className="text-xs text-gray-400 truncate">{account.accountHandle}</div>
+            <div className="text-body-small text-gray-400 truncate">{account.accountHandle}</div>
           </div>
         </div>
 
@@ -120,18 +120,18 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         <div className="flex items-center gap-1.5">
           {account.status === 'verified' ? (
             <>
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span className="text-sm font-medium text-emerald-600">Connected</span>
+              <CheckCircle2 className="w-4 h-4 text-nitra-success" />
+              <span className="text-body-base font-medium text-nitra-success">Connected</span>
             </>
           ) : (
             <>
               <XCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm font-medium text-red-600">Expired</span>
+              <span className="text-body-base font-medium text-red-600">Expired</span>
             </>
           )}
         </div>
         {/* Last Synced 作為輔助資訊 */}
-        <span className="text-xs text-gray-400">
+        <span className="text-body-small text-gray-400">
           {account.lastSynced || '-'}
         </span>
       </div>
@@ -140,7 +140,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
       <div className="col-span-3 flex items-center">
         <div className="flex items-center gap-1.5">
           <Users className="w-4 h-4 text-gray-400" />
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-body-base font-medium text-gray-900">
             {account.followers 
               ? account.followers >= 1000000 
                 ? (account.followers / 1000000).toFixed(1) + 'M'
@@ -158,7 +158,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
           <button 
             onClick={(e) => { e.stopPropagation(); handleReconnect(); }}
             disabled={reconnecting}
-            className={`px-3 py-1.5 text-xs font-medium ${
+            className={`px-3 py-1.5 text-body-small font-medium ${
               layoutStyle === 'new'
                 ? 'bg-red-600 text-white hover:bg-red-700'
                 : 'text-red-600 border border-red-300 hover:bg-red-50'
@@ -177,7 +177,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         <ActionMenu
           trigger={
             <span className={`inline-flex ${layoutStyle === 'new' ? 'px-2.5 py-1.5' : 'p-1.5'} bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200`}>
-              <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-4 h-4'} text-gray-600 hover:text-[#1A929F] transition-colors duration-200`} />
+              <MoreHorizontal className={`${layoutStyle === 'new' ? 'w-4 h-4' : 'w-4 h-4'} text-gray-600 hover:text-nitra-primary transition-colors duration-200`} />
             </span>
           }
           platform={platform}
