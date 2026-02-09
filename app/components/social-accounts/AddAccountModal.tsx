@@ -49,7 +49,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             {showErrorStep && (
-              <button onClick={() => setSelectedPlatform(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="返回">
+              <button onClick={() => setSelectedPlatform(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Back">
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
             )}
@@ -57,7 +57,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
               {showErrorStep ? `Simulate error: ${selectedPlatform ? platformConfig[selectedPlatform].name : ''}` : 'Choose Platform'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="關閉">
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Close">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>

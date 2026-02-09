@@ -30,7 +30,7 @@ export default function ThemeSwitcher() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="關閉"
+                aria-label="Close"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
@@ -75,8 +75,8 @@ export default function ThemeSwitcher() {
         className={`fixed bottom-6 right-6 z-[99] w-14 h-14 rounded-full bg-gradient-to-r from-[#1A4D3E] to-[#2D5F4F] text-white shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center cursor-pointer group ${
           isOpen ? 'rotate-180' : ''
         }`}
-        aria-label="切換設計風格"
-        title="切換設計風格"
+        aria-label="Toggle design style"
+        title="Toggle design style"
       >
         <Palette className="w-6 h-6 transition-transform duration-300" />
         <span className="absolute inset-0 rounded-full bg-[#1A4D3E]/20 animate-ping"></span>

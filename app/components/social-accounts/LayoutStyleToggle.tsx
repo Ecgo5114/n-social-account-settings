@@ -110,7 +110,7 @@ export function LayoutStyleToggle({
         onClick={() => setOpen((v) => !v)}
         className="w-9 h-9 bg-gradient-to-br from-[#1A929F] to-[#168995] hover:from-[#168995] hover:to-[#147d89] rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center justify-center group"
         title="切換樣式與情境"
-        aria-label="切換樣式與情境"
+        aria-label="Toggle style and scenario"
       >
         <Settings2 className="w-4 h-4 text-white" />
         <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">

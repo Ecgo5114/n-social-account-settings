@@ -237,7 +237,7 @@ export default function SocialAccountsSettings() {
                 onClick={() => setSidebarExpanded(!sidebarExpanded)}
                 className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors cursor-pointer flex-shrink-0"
                 title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-                aria-label={sidebarExpanded ? "收起側邊欄" : "展開側邊欄"}
+                aria-label={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
               >
                 {sidebarExpanded ? (
                   <ChevronLeft className="w-4 h-4 text-gray-600" />
@@ -315,7 +315,7 @@ export default function SocialAccountsSettings() {
             sidebarExpanded ? 'left-[240px]' : 'left-[72px]'
           } -translate-x-1/2 top-6`}
           title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-          aria-label={sidebarExpanded ? "收起側邊欄" : "展開側邊欄"}
+          aria-label={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
         >
           {sidebarExpanded ? (
             <ChevronLeft className="w-4 h-4 text-gray-600" />
@@ -352,7 +352,7 @@ export default function SocialAccountsSettings() {
             <div className="flex items-center gap-3">
               <button 
                 className="w-9 h-9 rounded-lg hover:bg-white/80 hover:backdrop-blur-sm flex items-center justify-center transition-all duration-200 cursor-pointer hover:shadow-sm"
-                aria-label="通知"
+                aria-label="Notifications"
               >
                 <Bell className="w-4 h-4 text-gray-600 hover:text-[#1A929F] transition-colors duration-200" />
               </button>
@@ -436,7 +436,7 @@ export default function SocialAccountsSettings() {
                     <button
                       onClick={() => document.getElementById(`platform-group-${platform}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                       className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
-                      aria-label={`跳轉至 ${cfg.name}`}
+                      aria-label={`Jump to ${cfg.name}`}
                     >
                       <Icon className={`w-4 h-4 ${cfg.color}`} />
                     </button>

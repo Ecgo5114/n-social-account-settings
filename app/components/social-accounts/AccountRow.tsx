@@ -2,7 +2,7 @@
 
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, RefreshCw, MoreHorizontal, Loader2 } from 'lucide-react';
+import { Users, RefreshCw, MoreHorizontal, Loader2, Check, X } from 'lucide-react';
 import { ActionMenu } from './ActionMenu';
 import type { SocialAccount, Platform, LayoutStyle } from '@/app/types/social-accounts';
 
@@ -120,12 +120,12 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         <div className="flex items-center gap-2">
           {account.status === 'verified' ? (
             <>
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-600"></div>
+              <Check className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-medium text-emerald-600">Connected</span>
             </>
           ) : (
             <>
-              <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
+              <X className="w-4 h-4 text-red-600" />
               <span className="text-sm font-medium text-red-600">Expired</span>
             </>
           )}
@@ -164,7 +164,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
                 : 'text-red-600 border border-red-300 hover:bg-red-50'
             } rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5 disabled:opacity-70`}
             title="Reconnect account"
-            aria-label="重新連接帳號"
+            aria-label="Reconnect account"
           >
             {reconnecting ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
