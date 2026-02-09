@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -9,13 +10,21 @@ interface ToastProps {
   onDismiss?: () => void;
   /** success = 綠色, error = 紅色 */
   variant?: 'success' | 'error';
+  /** 自動隱藏毫秒數，設定後會於延遲後呼叫 onDismiss（避免 Strict Mode 清掉父層 timeout） */
+  autoHideDuration?: number;
 }
 
 /**
  * Toast 提醒：成功（綠）或錯誤（紅）
  */
-export function Toast({ message, isVisible, onDismiss, variant = 'success' }: ToastProps) {
+export function Toast({ message, isVisible, onDismiss, variant = 'success', autoHideDuration }: ToastProps) {
   const isError = variant === 'error';
+
+  useEffect(() => {
+    if (!isVisible || !autoHideDuration || !onDismiss) return;
+    const t = setTimeout(onDismiss, autoHideDuration);
+    return () => clearTimeout(t);
+  }, [isVisible, autoHideDuration, onDismiss]);
   return (
     <AnimatePresence>
       {isVisible && (

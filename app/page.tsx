@@ -19,6 +19,7 @@ import { GroupHeader } from './components/social-accounts/GroupHeader';
 import { AccountRow } from './components/social-accounts/AccountRow';
 import { LayoutStyleToggle, type DemoScenario } from './components/social-accounts/LayoutStyleToggle';
 import { AddAccountModal } from './components/social-accounts/AddAccountModal';
+import { OAuthSimulationModal } from './components/social-accounts/OAuthSimulationModal';
 import { EmptyState } from './components/social-accounts/EmptyState';
 import { ConnectionLoadingOverlay } from './components/social-accounts/ConnectionLoadingOverlay';
 import { Toast } from './components/social-accounts/Toast';
@@ -54,24 +55,25 @@ export default function SocialAccountsSettings() {
 
   // Add Account 流程狀態
   const [showAddModal, setShowAddModal] = useState(false);
+  const [oauthPlatform, setOauthPlatform] = useState<'twitter' | 'linkedin' | 'instagram' | null>(null);
   const [connectingPlatform, setConnectingPlatform] = useState<Platform | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
+  const [toastAutoHideMs, setToastAutoHideMs] = useState<number | null>(null);
   const [highlightedAccountId, setHighlightedAccountId] = useState<string | null>(null);
   const accountRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const scheduleToastHide = useCallback((delayMs: number) => {
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    toastTimeoutRef.current = setTimeout(() => {
-      setToastVisible(false);
-      toastTimeoutRef.current = null;
-    }, delayMs);
+  const showToast = useCallback((message: string, variant: 'success' | 'error', autoHideMs: number) => {
+    setToastMessage(message);
+    setToastVariant(variant);
+    setToastVisible(true);
+    setToastAutoHideMs(autoHideMs);
   }, []);
 
-  useEffect(() => () => {
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+  const hideToast = useCallback(() => {
+    setToastVisible(false);
+    setToastAutoHideMs(null);
   }, []);
 
   // Disconnect 確認 Modal
@@ -81,12 +83,9 @@ export default function SocialAccountsSettings() {
     if (accountToDisconnect) {
       deleteAccount(accountToDisconnect.id);
       setAccountToDisconnect(null);
-      setToastVariant('success');
-      setToastMessage('Account disconnected successfully.');
-      setToastVisible(true);
-      scheduleToastHide(4000);
+      showToast('Account disconnected successfully.', 'success', 4000);
     }
-  }, [accountToDisconnect, deleteAccount, scheduleToastHide]);
+  }, [accountToDisconnect, deleteAccount, showToast]);
 
   // 新增帳號錯誤情境：選擇錯誤類型 → 模擬串聯 → 回到 Add Account 步驟一 + 錯誤 toast
   const handleSelectErrorType = useCallback(async (errorType: AddAccountErrorType, platform: Platform) => {
@@ -97,30 +96,50 @@ export default function SocialAccountsSettings() {
     await new Promise((r) => setTimeout(r, 1500));
     setConnectingPlatform(null);
     setShowAddModal(true); // 回到 Add Account 彈窗步驟一，讓使用者可重新選擇
-    setToastVariant('error');
-    setToastMessage(opt.message);
-    setToastVisible(true);
-    scheduleToastHide(5000);
-  }, [scheduleToastHide]);
+    showToast(opt.message, 'error', 5000);
+  }, [showToast]);
 
-  // 選擇平台後：模擬串聯 → 新增帳號 → 成功反饋
+  // 選擇平台後：模擬串聯（2 秒）→ 新增帳號 → 成功反饋
   const handleSelectPlatform = useCallback(async (platform: Platform) => {
     setShowAddModal(false);
+    setOauthPlatform(null);
     setConnectingPlatform(platform);
-    await new Promise(r => setTimeout(r, 1800));
+    await new Promise(r => setTimeout(r, 2000));
     const newAccount = await executeAddAccount(platform);
     setConnectingPlatform(null);
     expandPlatform(platform);
-    setToastVariant('success');
-    setToastVisible(true);
-    setToastMessage(`Successfully connected to ${platformConfig[platform].name}`);
+    showToast(`Successfully connected to ${platformConfig[platform].name}`, 'success', 3000);
     setHighlightedAccountId(newAccount.id);
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       accountRowRefs.current[newAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
+    }, 150);
     setTimeout(() => setHighlightedAccountId(null), 3000);
-    scheduleToastHide(3000);
-  }, [executeAddAccount, expandPlatform, scheduleToastHide]);
+  }, [executeAddAccount, expandPlatform, showToast]);
+
+  const OAUTH_PLATFORMS: Platform[] = ['twitter', 'linkedin', 'instagram'];
+
+  // 新增帳號時：Twitter/LinkedIn/Instagram 先顯示 OAuth 模擬彈窗，其餘平台直接串聯
+  const handlePlatformClick = useCallback((platform: Platform) => {
+    if (OAUTH_PLATFORMS.includes(platform)) {
+      setShowAddModal(false);
+      setOauthPlatform(platform as 'twitter' | 'linkedin' | 'instagram');
+    } else {
+      handleSelectPlatform(platform);
+    }
+  }, [handleSelectPlatform]);
+
+  const handleOAuthAuthorize = useCallback(() => {
+    if (!oauthPlatform) return;
+    const platform = oauthPlatform;
+    setOauthPlatform(null);
+    handleSelectPlatform(platform);
+  }, [oauthPlatform, handleSelectPlatform]);
+
+  const handleOAuthCancel = useCallback(() => {
+    setOauthPlatform(null);
+    setShowAddModal(true);
+    showToast('Authorization cancelled.', 'error', 5000);
+  }, [showToast]);
 
   // 動態平台列表：擴充預覽情境 = 12 平台，其餘 = 3 平台
   const platforms = (demoScenario === 'expansion-preview' ? EXPANSION_PLATFORMS : STANDARD_PLATFORMS) as Platform[];
@@ -516,10 +535,7 @@ export default function SocialAccountsSettings() {
                                   onDisconnectRequest={() => setAccountToDisconnect(account)}
                                   onReconnect={async () => {
                                     await reconnectAccount(account.id);
-                                    setToastVariant('success');
-                                    setToastMessage('Account reconnected successfully.');
-                                    setToastVisible(true);
-                                    scheduleToastHide(4000);
+                                    showToast('Account reconnected successfully.', 'success', 4000);
                                   }}
                                 />
                               </motion.div>
@@ -599,10 +615,7 @@ export default function SocialAccountsSettings() {
                         onDisconnectRequest={() => setAccountToDisconnect(row.account!)}
                         onReconnect={async () => {
                           await reconnectAccount(row.account!.id);
-                          setToastVariant('success');
-                          setToastMessage('Account reconnected successfully.');
-                          setToastVisible(true);
-                          scheduleToastHide(4000);
+                          showToast('Account reconnected successfully.', 'success', 4000);
                         }}
                       />
                     </motion.div>
@@ -626,18 +639,32 @@ export default function SocialAccountsSettings() {
       <AddAccountModal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onSelectPlatform={handleSelectPlatform}
+        onSelectPlatform={handlePlatformClick}
         platforms={platforms}
         getAccountCount={(p) => getAccountsByPlatform(p).length}
         isErrorDemoMode={demoScenario === 'add-account-error'}
         onSelectErrorType={handleSelectErrorType}
       />
 
+      {/* OAuth 模擬彈窗 - Twitter / LinkedIn / Instagram */}
+      <OAuthSimulationModal
+        isOpen={oauthPlatform !== null}
+        platform={oauthPlatform}
+        onAuthorize={handleOAuthAuthorize}
+        onCancel={handleOAuthCancel}
+      />
+
       {/* Connection Loading Overlay */}
       <ConnectionLoadingOverlay isVisible={!!connectingPlatform} platform={connectingPlatform} />
 
-      {/* Toast (新增帳號 / 解除連接 / 錯誤提示) */}
-      <Toast message={toastMessage} isVisible={toastVisible} variant={toastVariant} />
+      {/* Toast (新增帳號 / 解除連接 / 錯誤提示) - 由 Toast 內建 autoHide 避免 Strict Mode 清掉 timeout */}
+      <Toast
+        message={toastMessage}
+        isVisible={toastVisible}
+        variant={toastVariant}
+        autoHideDuration={toastAutoHideMs ?? undefined}
+        onDismiss={hideToast}
+      />
 
       {/* Disconnect 確認 Modal */}
       <DisconnectConfirmationModal

@@ -142,24 +142,24 @@ export function useSocialAccounts(demoScenario: DemoScenario = 'normal') {
 
   const executeAddAccount = useCallback(
     (platform: Platform): Promise<SocialAccount> => {
-      let newAccount: SocialAccount;
+      const newAccount: SocialAccount = {
+        id: `new-${++accountIdCounter}`,
+        platform,
+        accountName: `New ${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
+        accountHandle: platform === 'twitter' ? '@new_account' : 'new-account',
+        status: 'verified',
+        followers: Math.floor(Math.random() * 50000) + 1000,
+        lastSynced: 'Just now',
+        isPrimary: false,
+        ...(platform === 'linkedin' ? { linkedinType: 'Company Page' as const } : {}),
+      };
       updateCurrentScenario((prev) => {
         const existingIgCount = prev.filter((a) => a.platform === 'instagram').length;
         const isFirstInstagram = platform === 'instagram' && existingIgCount === 0;
-        newAccount = {
-          id: `new-${++accountIdCounter}`,
-          platform,
-          accountName: `New ${platform.charAt(0).toUpperCase() + platform.slice(1)} Account`,
-          accountHandle: platform === 'twitter' ? '@new_account' : 'new-account',
-          status: 'verified',
-          followers: Math.floor(Math.random() * 50000) + 1000,
-          lastSynced: 'Just now',
-          isPrimary: isFirstInstagram,
-        };
-        if (platform === 'linkedin') newAccount.linkedinType = 'Company Page';
-        return [...prev, newAccount];
+        const accountToAdd = { ...newAccount, isPrimary: isFirstInstagram };
+        return [...prev, accountToAdd];
       });
-      return Promise.resolve(newAccount!);
+      return Promise.resolve(newAccount);
     },
     [updateCurrentScenario]
   );
