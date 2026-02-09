@@ -440,7 +440,7 @@ export default function SocialAccountsSettings() {
                     >
                       <Icon className={`w-4 h-4 ${cfg.color}`} />
                     </button>
-                    <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/jumpto:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+                    <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/jumpto:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
                       {cfg.name}
                       <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
                     </span>

@@ -123,7 +123,7 @@ export function ActionMenu(props: ActionMenuProps) {
               </span>
               <span className="relative flex-shrink-0 text-gray-400 cursor-help ml-2 inline-flex justify-center">
                 <HelpCircle className="w-3.5 h-3.5" />
-                <span className="absolute right-0 bottom-full mb-2 left-auto px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap text-left">
+                <span className="absolute right-0 bottom-full mb-2 left-auto px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/setprimary:opacity-100 pointer-events-none transition-opacity z-[101] whitespace-nowrap text-left">
                   Make this your default account for new posts.
                   <span className="absolute top-full right-2 left-auto border-[6px] border-transparent border-t-gray-900" />
                 </span>

@@ -104,7 +104,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
                   <span className="inline-flex items-center px-2 py-0 rounded-full text-[10px] font-medium bg-[#1A929F] text-white flex-shrink-0 cursor-help">
                     Primary
                   </span>
-                  <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/primary:opacity-100 pointer-events-none transition-opacity z-50 w-[280px] text-center leading-relaxed">
+                  <span className="absolute left-1/2 bottom-full mb-2 -translate-x-1/2 px-2 py-1.5 bg-gray-900 text-white text-xs rounded opacity-0 group-hover/primary:opacity-100 pointer-events-none transition-opacity z-50 w-[280px] text-center leading-relaxed">
                     This account is used as the default for scheduling posts and will be featured first in your analytics reports.
                     <span className="absolute left-1/2 top-full -translate-x-1/2 border-[6px] border-transparent border-t-gray-900" />
                   </span>

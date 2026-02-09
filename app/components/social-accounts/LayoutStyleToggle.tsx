@@ -113,7 +113,7 @@ export function LayoutStyleToggle({
         aria-label="切換樣式與情境"
       >
         <Settings2 className="w-4 h-4 text-white" />
-        <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-[10px] rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">
+        <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">
           {open ? '關閉選單' : '樣式與情境設定'}
         </div>
       </button>
