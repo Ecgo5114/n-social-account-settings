@@ -336,7 +336,7 @@ export default function DesignSystemPage() {
                         </div>
                       </div>
                       <div className="col-span-3 flex flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           <span className="text-sm font-medium text-emerald-600">Connected</span>
                         </div>
@@ -363,7 +363,7 @@ export default function DesignSystemPage() {
                       </div>
                     </div>
                     <div className="col-span-3 flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <XCircle className="w-4 h-4 text-red-600" />
                         <span className="text-sm font-medium text-red-600">Expired</span>
                       </div>

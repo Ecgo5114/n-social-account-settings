@@ -117,7 +117,7 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
 
       {/* Status Column (含 Last Synced) */}
       <div className="col-span-3 flex flex-col gap-0.5 justify-center">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {account.status === 'verified' ? (
             <>
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
