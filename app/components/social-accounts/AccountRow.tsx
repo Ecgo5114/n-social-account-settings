@@ -2,7 +2,7 @@
 
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, RefreshCw, MoreHorizontal, Loader2, Check, X } from 'lucide-react';
+import { Users, RefreshCw, MoreHorizontal, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { ActionMenu } from './ActionMenu';
 import type { SocialAccount, Platform, LayoutStyle } from '@/app/types/social-accounts';
 
@@ -120,12 +120,12 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
         <div className="flex items-center gap-2">
           {account.status === 'verified' ? (
             <>
-              <Check className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-medium text-emerald-600">Connected</span>
             </>
           ) : (
             <>
-              <X className="w-4 h-4 text-red-600" />
+              <XCircle className="w-4 h-4 text-red-600" />
               <span className="text-sm font-medium text-red-600">Expired</span>
             </>
           )}

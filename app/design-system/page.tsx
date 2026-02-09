@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, X, AlertCircle, ChevronDown, Users } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ChevronDown, Users } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 import { colors, shadows } from '@/app/constants/design-tokens';
 import type { LayoutStyle } from '@/app/types/social-accounts';
@@ -225,10 +225,10 @@ export default function DesignSystemPage() {
                   Primary
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  <Check className="w-3.5 h-3.5" /> Connected
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Connected
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600 border border-red-200">
-                  <X className="w-3.5 h-3.5" /> Expired
+                  <XCircle className="w-3.5 h-3.5" /> Expired
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                   <AlertCircle className="w-3.5 h-3.5" /> Warning
@@ -337,7 +337,7 @@ export default function DesignSystemPage() {
                       </div>
                       <div className="col-span-3 flex flex-col gap-0.5">
                         <div className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-emerald-600" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           <span className="text-sm font-medium text-emerald-600">Connected</span>
                         </div>
                         <span className="text-xs text-gray-400">Just now</span>
@@ -364,7 +364,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div className="col-span-3 flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
-                        <X className="w-4 h-4 text-red-600" />
+                        <XCircle className="w-4 h-4 text-red-600" />
                         <span className="text-sm font-medium text-red-600">Expired</span>
                       </div>
                       <span className="text-xs text-gray-400">2 hours ago</span>
@@ -415,7 +415,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div className="col-span-3 flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         <span className="text-sm font-medium text-emerald-600">Connected</span>
                       </div>
                       <span className="text-xs text-gray-400">Just now</span>
