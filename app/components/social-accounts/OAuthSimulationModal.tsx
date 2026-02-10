@@ -33,13 +33,13 @@ function TwitterOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => voi
       <div className="w-full space-y-3">
         <button
           onClick={(e) => { e.stopPropagation(); onAuthorize(); }}
-          className="w-full py-3 px-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
+          className="w-full py-3 px-4 min-h-[44px] bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
         >
           Authorize app
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onCancel(); }}
-          className="w-full py-2 text-gray-400 hover:text-white transition-colors cursor-pointer text-body-base"
+          className="w-full py-2.5 md:py-2 min-h-[44px] md:min-h-0 text-gray-400 hover:text-white transition-colors cursor-pointer text-body-base"
         >
           Cancel
         </button>
@@ -69,16 +69,16 @@ function LinkedInOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => vo
           </li>
         ))}
       </ul>
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={(e) => { e.stopPropagation(); onCancel(); }}
-          className="flex-1 py-3 px-4 bg-white border border-gray-300 text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-colors cursor-pointer"
+          className="flex-1 py-3 px-4 min-h-[44px] bg-white border border-gray-300 text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-colors cursor-pointer"
         >
           Cancel
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onAuthorize(); }}
-          className="flex-1 py-3 px-4 bg-[#0A66C2] text-white font-semibold rounded-full hover:bg-[#004182] transition-colors cursor-pointer"
+          className="flex-1 py-3 px-4 min-h-[44px] bg-[#0A66C2] text-white font-semibold rounded-full hover:bg-[#004182] transition-colors cursor-pointer"
         >
           Allow
         </button>
@@ -110,14 +110,14 @@ function InstagramOAuthContent({ onAuthorize, onCancel }: { onAuthorize: () => v
       <div className="w-full space-y-2">
         <button
           onClick={(e) => { e.stopPropagation(); onAuthorize(); }}
-          className="w-full py-3 px-4 rounded-lg font-semibold transition-colors cursor-pointer"
+          className="w-full py-3 px-4 min-h-[44px] rounded-lg font-semibold transition-colors cursor-pointer"
           style={{ background: 'linear-gradient(45deg, #f09433, #e6683c)' }}
         >
           <span className="text-white">Continue as Echo H</span>
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onCancel(); }}
-          className="w-full py-2 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer text-body-base"
+          className="w-full py-2.5 md:py-2 min-h-[44px] md:min-h-0 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer text-body-base"
         >
           Cancel
         </button>
@@ -175,7 +175,7 @@ export function OAuthSimulationModal(props: OAuthSimulationModalProps) {
       />
       {/* OAuth window - platform-specific styling */}
       <div
-        className={`relative rounded-2xl shadow-2xl overflow-hidden w-[min(420px,92vw)] ${
+        className={`relative rounded-2xl md:rounded-2xl shadow-2xl overflow-hidden w-full h-full md:h-auto md:w-[min(420px,92vw)] md:max-h-[90vh] overflow-y-auto ${
           isTwitter
             ? 'bg-[#15202B] border border-gray-700/50'
             : 'bg-white border border-gray-200'
@@ -198,7 +198,7 @@ export function OAuthSimulationModal(props: OAuthSimulationModalProps) {
           </div>
         </div>
         {/* Content area */}
-        <div className={`p-6 ${isTwitter ? 'py-8' : ''}`}>
+        <div className={`p-4 md:p-6 ${isTwitter ? 'md:py-8' : ''}`}>
           {renderContent()}
         </div>
       </div>

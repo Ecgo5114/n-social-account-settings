@@ -19,11 +19,11 @@ export function ConnectionLoadingOverlay({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] animate-in fade-in duration-200"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] animate-in fade-in duration-200 p-4 md:p-0"
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl flex flex-col items-center gap-4">
+      <div className="bg-white rounded-2xl md:rounded-2xl p-6 md:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center gap-4">
         <Loader2 className="w-12 h-12 text-nitra-primary animate-spin" />
         <div className="text-center">
           <p className="font-semibold text-gray-900">Connecting to {config.name}</p>

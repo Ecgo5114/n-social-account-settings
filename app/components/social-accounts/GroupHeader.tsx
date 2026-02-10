@@ -42,7 +42,7 @@ export function GroupHeader({
           {/* 展開/收起按鈕 */}
           <button
             onClick={onToggle}
-            className={`${layoutStyle === 'new' ? 'w-6 h-6' : 'w-5 h-5'} flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer`}
+            className={`${layoutStyle === 'new' ? 'w-6 h-6 md:w-6 md:h-6' : 'w-5 h-5'} min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer`}
           >
             {expanded ? (
               <ChevronDown className={`${layoutStyle === 'new' ? 'w-[18px] h-[18px]' : 'w-4 h-4'}`} />

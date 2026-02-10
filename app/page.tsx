@@ -52,6 +52,7 @@ export default function SocialAccountsSettings() {
   const [activeTab, setActiveTab] = useState('social');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [settingsExpanded, setSettingsExpanded] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Add Account 流程狀態
   const [showAddModal, setShowAddModal] = useState(false);
@@ -88,16 +89,32 @@ export default function SocialAccountsSettings() {
   }, [accountToDisconnect, deleteAccount, showToast]);
 
   // 新增帳號錯誤情境：選擇錯誤類型 → 模擬串聯 → 回到 Add Account 步驟一 + 錯誤 toast
+  // 例外：「帳號已存在」→ 關閉彈窗、下滑並高亮重複帳號、顯示 toast（不重開彈窗）
   const handleSelectErrorType = useCallback(async (errorType: AddAccountErrorType, platform: Platform) => {
     const opt = ADD_ACCOUNT_ERROR_OPTIONS.find((o) => o.value === errorType);
     if (!opt) return;
     setShowAddModal(false);
+
+    if (errorType === 'account-already-exists') {
+      const duplicateAccount = getAccountsByPlatform(platform)[0];
+      if (duplicateAccount) {
+        expandPlatform(platform);
+        setHighlightedAccountId(duplicateAccount.id);
+        setTimeout(() => {
+          accountRowRefs.current[duplicateAccount.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+        setTimeout(() => setHighlightedAccountId(null), 3000);
+      }
+      showToast(opt.message, 'error', 5000);
+      return;
+    }
+
     setConnectingPlatform(platform);
     await new Promise((r) => setTimeout(r, 1500));
     setConnectingPlatform(null);
     setShowAddModal(true); // 回到 Add Account 彈窗步驟一，讓使用者可重新選擇
     showToast(opt.message, 'error', 5000);
-  }, [showToast]);
+  }, [showToast, getAccountsByPlatform, expandPlatform]);
 
   // 選擇平台後：模擬串聯（2 秒）→ 新增帳號 → 成功反饋
   const handleSelectPlatform = useCallback(async (platform: Platform) => {
@@ -217,6 +234,14 @@ export default function SocialAccountsSettings() {
         ? 'bg-nitra-bg-new' 
         : 'bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100'
     }`}>
+      {/* 行動版選單遮罩 */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      
       {/* 左側導航欄 - 固定不隨內容捲動 */}
       <aside className={`flex-shrink-0 h-screen overflow-y-auto ${
         layoutStyle === 'new'
@@ -224,6 +249,8 @@ export default function SocialAccountsSettings() {
           : 'bg-white/80 backdrop-blur-xl border-r border-gray-200/50 shadow-lg'
       } flex flex-col transition-all duration-300 ${
         sidebarExpanded ? 'w-[240px]' : 'w-[72px]'
+      } ${
+        mobileMenuOpen ? 'fixed left-0 z-50 md:relative md:z-auto' : 'hidden md:flex'
       }`}>
         {/* Logo（current）／Logo + 收合按鈕（new theme：展開時 logo 旁，收合時 logo 下） */}
         <div className="px-6 pt-6 pb-10">
@@ -326,11 +353,11 @@ export default function SocialAccountsSettings() {
         </div>
       </aside>
 
-      {/* 收合按鈕（current theme）：淡灰邊框圓形，置於頁首與左選單邊界 */}
+      {/* 收合按鈕（current theme）：淡灰邊框圓形，置於頁首與左選單邊界 - 桌面版顯示 */}
       {layoutStyle === 'current' && (
         <button
           onClick={() => setSidebarExpanded(!sidebarExpanded)}
-          className={`absolute z-20 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
+          className={`hidden md:flex absolute z-20 w-8 h-8 rounded-full bg-white border border-gray-200 items-center justify-center shadow-sm hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
             sidebarExpanded ? 'left-[240px]' : 'left-[72px]'
           } -translate-x-1/2 top-6`}
           title={sidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
@@ -345,14 +372,23 @@ export default function SocialAccountsSettings() {
       )}
 
       {/* 主要內容區 - 僅內容區域捲動 */}
-      <div className={`flex-1 flex flex-col min-h-0 overflow-hidden ${layoutStyle === 'new' ? 'pl-3' : ''}`}>
+      <div className={`flex-1 flex flex-col min-h-0 overflow-hidden ${layoutStyle === 'new' ? 'pl-0 md:pl-3' : ''}`}>
         {/* 頂部導航條 - 固定不隨內容捲動 */}
-        <header className={`flex-shrink-0 py-4 ${layoutStyle === 'new' ? 'pl-0 pr-6' : 'px-6'} ${
+        <header className={`flex-shrink-0 py-3 md:py-4 ${layoutStyle === 'new' ? 'pl-4 pr-4 md:pl-0 md:pr-6' : 'px-4 md:px-6'} ${
           layoutStyle === 'new'
             ? 'bg-transparent'
             : 'bg-white/70 backdrop-blur-xl border-b border-gray-200/50 shadow-sm'
         }`}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
+            {/* 行動版選單按鈕 */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              aria-label="Toggle menu"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
+            
             {/* 搜尋框 */}
             <div className="flex-1 max-w-md">
               <div className="relative">
@@ -362,22 +398,22 @@ export default function SocialAccountsSettings() {
                   id="search"
                   type="text"
                   placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-200/80 rounded-lg text-body-base focus:outline-none focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary transition-all duration-200 hover:border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 md:py-2 min-h-[44px] md:min-h-0 bg-transparent border border-gray-200/80 rounded-lg text-body-base focus:outline-none focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary transition-all duration-200 hover:border-gray-300"
                 />
               </div>
             </div>
             
             {/* 右側工具列 */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <button 
-                className="w-9 h-9 rounded-lg hover:bg-white/80 hover:backdrop-blur-sm flex items-center justify-center transition-all duration-200 cursor-pointer hover:shadow-sm"
+                className="min-h-[44px] min-w-[44px] md:h-9 md:w-9 rounded-lg hover:bg-white/80 hover:backdrop-blur-sm flex items-center justify-center transition-all duration-200 cursor-pointer hover:shadow-sm"
                 aria-label="Notifications"
               >
                 <Bell className="w-4 h-4 text-gray-600 hover:text-nitra-primary transition-colors duration-200" />
               </button>
-              <div className="flex items-center gap-3 pl-3 border-l border-gray-200/60">
+              <div className="hidden sm:flex items-center gap-2 md:gap-3 pl-2 md:pl-3 border-l border-gray-200/60">
                 <div className="w-8 h-8 rounded-full bg-nitra-primary/10 border border-nitra-primary/20 flex items-center justify-center text-body-small font-bold text-nitra-primary">EH</div>
-                <div className="text-left">
+                <div className="hidden md:block text-left">
                   <div className="text-body-small font-bold text-gray-900">Echo H</div>
                   <div className="text-detail text-gray-500">Super admin</div>
                 </div>
@@ -390,7 +426,7 @@ export default function SocialAccountsSettings() {
         <main 
           className={`flex-1 flex flex-col min-h-0 overflow-hidden ${
             layoutStyle === 'new'
-              ? 'bg-white rounded-[18px] mr-4 mt-0 mb-8'
+              ? 'bg-white rounded-lg md:rounded-[18px] mr-0 md:mr-4 mt-0 mb-4 md:mb-8'
               : ''
           }`}
           style={layoutStyle === 'new' ? {
@@ -399,33 +435,34 @@ export default function SocialAccountsSettings() {
         >
         
         {/* 內容區域 */}
-        <div className={`flex-1 overflow-auto px-10 ${layoutStyle === 'new' ? 'py-8' : 'py-6'}`}>
+        <div className={`flex-1 overflow-auto px-4 md:px-6 lg:px-10 ${layoutStyle === 'new' ? 'py-4 md:py-6 lg:py-8' : 'py-4 md:py-6'}`}>
           <div className="max-w-[1400px] mx-auto">
             {accounts.length === 0 ? (
               <EmptyState onAddPlatform={() => setShowAddModal(true)} />
             ) : (
             <>
             {/* 表格標題區 */}
-            <div className="mb-4 flex items-start justify-between">
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="flex flex-col gap-0.5">
-                <h2 className="text-h1 font-bold text-gray-900">Social Account</h2>
+                <h2 className="text-h2 md:text-h1 font-bold text-gray-900">Social Account</h2>
                 <span className="text-body-small text-gray-400">{accounts.length} connected accounts</span>
               </div>
 
               <div className="flex items-center">
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-nitra-primary text-white rounded-lg transition-all duration-200 text-body-base font-bold cursor-pointer hover:opacity-90"
+                  className="flex items-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-nitra-primary text-white rounded-lg transition-all duration-200 text-body-base font-bold cursor-pointer hover:opacity-90"
                 >
                   <Plus className="w-4 h-4" />
-                  Add Account
+                  <span className="hidden sm:inline">Add Account</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
             </div>
 
           {/* 過期帳號錯誤提示橫條 */}
           {expiredCount >= 1 && expiredBannerData && (
-            <div className="mb-4 flex items-center gap-4 px-4 py-3 rounded-lg bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/60 shadow-sm">
+            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 py-3 rounded-lg bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/60 shadow-sm">
               <div className="flex-shrink-0 w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
                 <AlertCircle className="w-5 h-5 text-red-600" />
               </div>
@@ -435,7 +472,7 @@ export default function SocialAccountsSettings() {
               </div>
               <button
                 onClick={handleViewExpiredIssue}
-                className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-body-base font-medium transition-colors cursor-pointer"
+                className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-red-600 hover:bg-red-700 text-white rounded-lg text-body-base font-medium transition-colors cursor-pointer"
               >
                 <Eye className="w-4 h-4" />
                 {expiredBannerData.buttonText}
@@ -454,7 +491,7 @@ export default function SocialAccountsSettings() {
                   <span key={platform} className="relative group/jumpto">
                     <button
                       onClick={() => document.getElementById(`platform-group-${platform}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                      className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
+                      className="min-h-[44px] min-w-[44px] md:h-9 md:w-9 rounded-lg flex items-center justify-center bg-gray-100 border border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer"
                       aria-label={`Jump to ${cfg.name}`}
                     >
                       <Icon className={`w-4 h-4 ${cfg.color}`} />
@@ -472,8 +509,8 @@ export default function SocialAccountsSettings() {
           {/* Grouped Table */}
           {layoutStyle === 'new' ? (
             <div>
-              {/* Table Header - 獨立有圓角，對齊帳號列 */}
-              <div className="grid grid-cols-12 gap-6 pl-[46px] pr-3 py-3 bg-gray-100/50 rounded-lg mb-3">
+              {/* Table Header - 獨立有圓角，對齊帳號列 - 行動版隱藏 */}
+              <div className="hidden md:grid grid-cols-12 gap-6 pl-[46px] pr-3 py-3 bg-gray-100/50 rounded-lg mb-3">
                 <div className="col-span-4 text-detail font-bold text-gray-500 uppercase tracking-widest">Account</div>
                 <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest pl-2">Status / Last Synced</div>
                 <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest pl-2">Followers</div>
@@ -509,7 +546,7 @@ export default function SocialAccountsSettings() {
                     
                     {/* Platform Accounts */}
                     {platformExpanded[platform] && (
-                      <div className="pl-[46px] pr-3 pb-3 space-y-2">
+                      <div className="pl-3 md:pl-[46px] pr-3 pb-3 space-y-2">
                         <AnimatePresence>
                           {platformAccounts.map((account) => {
                             const instagramAccounts = getAccountsByPlatform('instagram');
@@ -551,8 +588,8 @@ export default function SocialAccountsSettings() {
             </div>
           ) : (
             <div className="bg-white/70 backdrop-blur-xl border border-gray-200/50 rounded-lg overflow-hidden">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-200 bg-nitra-table-header">
+              {/* Table Header - 行動版隱藏 */}
+              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-200 bg-nitra-table-header">
                 <div className="col-span-4 text-detail font-bold text-gray-500 uppercase tracking-widest pl-[22px]">Account</div>
                 <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest">Status / Last Synced</div>
                 <div className="col-span-3 text-detail font-bold text-gray-500 uppercase tracking-widest">Followers</div>
@@ -691,16 +728,16 @@ export default function SocialAccountsSettings() {
 
       {/* Switch Account Modal */}
       {showSwitchModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200" onClick={() => setShowSwitchModal(false)}>
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-h2 font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Switch LinkedIn Account?</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200 p-4 md:p-0" onClick={() => setShowSwitchModal(false)}>
+          <div className="bg-white/95 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 max-w-md w-full h-full md:h-auto md:max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200/50 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-h2 md:text-h2 font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Switch LinkedIn Account?</h3>
             <p className="text-body-base text-gray-600 leading-relaxed mb-6">
               You can only connect one LinkedIn company page at a time. To add a new account, you must remove the existing one first.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setShowSwitchModal(false)}
-                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
+                className="flex-1 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
               >
                 Cancel
               </button>
@@ -709,7 +746,7 @@ export default function SocialAccountsSettings() {
                   console.log('Switching LinkedIn account');
                   setShowSwitchModal(false);
                 }}
-                className="flex-1 px-4 py-2 bg-nitra-primary text-white rounded-lg hover:opacity-90 transition-all duration-200 text-body-base font-bold cursor-pointer"
+                className="flex-1 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-nitra-primary text-white rounded-lg hover:opacity-90 transition-all duration-200 text-body-base font-bold cursor-pointer"
               >
                 Switch Account
               </button>

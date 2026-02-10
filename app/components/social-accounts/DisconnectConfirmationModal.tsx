@@ -36,13 +36,13 @@ export function DisconnectConfirmationModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-0"
       role="dialog"
       aria-modal="true"
       aria-labelledby="disconnect-modal-title"
       onClick={onCancel}
     >
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl md:rounded-2xl p-4 md:p-6 max-w-md w-full h-full md:h-auto md:max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
         <h3 id="disconnect-modal-title" className="text-h3 font-bold text-gray-900 mb-4">
           Disconnect {config?.name ?? 'account'}?
         </h3>
@@ -100,16 +100,16 @@ export function DisconnectConfirmationModal({
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
+            className="flex-1 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-body-base font-bold text-gray-700 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-body-base font-bold cursor-pointer"
+            className="flex-1 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-body-base font-bold cursor-pointer"
           >
             Disconnect account
           </button>

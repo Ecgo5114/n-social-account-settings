@@ -39,7 +39,7 @@ export function EmptyState({ onAddPlatform }: EmptyStateProps) {
       {/* Add Platform 按鈕 - 使用專案主要按鈕樣式 */}
       <button
         onClick={onAddPlatform}
-        className="flex items-center gap-2 px-4 py-2 bg-nitra-primary text-white rounded-lg transition-all duration-200 text-body-base font-bold cursor-pointer hover:opacity-90"
+        className="flex items-center gap-2 px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 bg-nitra-primary text-white rounded-lg transition-all duration-200 text-body-base font-bold cursor-pointer hover:opacity-90"
       >
         <Plus className="w-4 h-4" />
         Add Account

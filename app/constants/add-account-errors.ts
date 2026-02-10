@@ -3,6 +3,7 @@
  */
 export type AddAccountErrorType =
   | 'auth-cancelled'
+  | 'account-already-exists'
   | 'account-limit'
   | 'network-timeout'
   | 'platform-specific'
@@ -18,6 +19,11 @@ export const ADD_ACCOUNT_ERROR_OPTIONS: Array<{
     value: 'auth-cancelled',
     label: '授權取消',
     message: 'Connection cancelled. You closed the authorization window before completing the process. Please try again.',
+  },
+  {
+    value: 'account-already-exists',
+    label: '帳號已存在',
+    message: 'This account is already connected. We\'ve highlighted it for you.',
   },
   {
     value: 'account-limit',

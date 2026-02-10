@@ -71,7 +71,7 @@ export function LayoutStyleToggle({
                 <button
                   key={opt.value}
                   onClick={() => { onStyleChange?.(opt.value); setOpen(false); }}
-                  className={`flex-1 px-3 py-2 text-body-small font-medium rounded-lg transition-colors cursor-pointer text-center ${
+                  className={`flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 text-body-small font-medium rounded-lg transition-colors cursor-pointer text-center ${
                     currentStyle === opt.value
                       ? 'bg-nitra-primary text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -91,7 +91,7 @@ export function LayoutStyleToggle({
                 <button
                   key={opt.value}
                   onClick={() => { onDemoScenarioChange?.(opt.value); setOpen(false); }}
-                  className={`w-full px-3 py-2 text-body-small font-medium rounded-lg text-left transition-colors cursor-pointer ${
+                  className={`w-full px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 text-body-small font-medium rounded-lg text-left transition-colors cursor-pointer ${
                     demoScenario === opt.value
                       ? 'bg-nitra-primary/10 text-nitra-primary'
                       : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
@@ -108,11 +108,11 @@ export function LayoutStyleToggle({
       <button
         ref={btnRef}
         onClick={() => setOpen((v) => !v)}
-        className="w-9 h-9 bg-gradient-to-br from-nitra-primary to-nitra-primary-dark hover:from-nitra-primary-dark hover:to-nitra-primary-darker rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center justify-center group"
+        className="w-12 h-12 md:w-9 md:h-9 bg-gradient-to-br from-nitra-primary to-nitra-primary-dark hover:from-nitra-primary-dark hover:to-nitra-primary-darker rounded-full shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex items-center justify-center group"
         title="切換樣式與情境"
         aria-label="Toggle style and scenario"
       >
-        <Settings2 className="w-4 h-4 text-white" />
+        <Settings2 className="w-5 h-5 md:w-4 md:h-4 text-white" />
         <div className="absolute -top-9 right-0 px-2 py-1 bg-gray-900/90 backdrop-blur-sm text-white text-body-small rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap">
           {open ? '關閉選單' : '樣式與情境設定'}
         </div>

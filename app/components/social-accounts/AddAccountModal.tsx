@@ -44,12 +44,12 @@ export function AddAccountModal(props: AddAccountModalProps) {
   const showErrorStep = isErrorDemoMode && onSelectErrorType && selectedPlatform !== null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="add-account-modal-title" onClick={onClose}>
-      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-0" role="dialog" aria-modal="true" aria-labelledby="add-account-modal-title" onClick={onClose}>
+      <div className="bg-white rounded-2xl md:rounded-2xl p-4 md:p-6 max-w-2xl w-full h-full md:h-auto md:max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200/50" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             {showErrorStep && (
-              <button onClick={() => setSelectedPlatform(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Back">
+              <button onClick={() => setSelectedPlatform(null)} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 md:p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Back">
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
             )}
@@ -57,7 +57,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
               {showErrorStep ? `Simulate error: ${selectedPlatform ? platformConfig[selectedPlatform].name : ''}` : 'Choose Platform'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Close">
+          <button onClick={onClose} className="min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" aria-label="Close">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
@@ -70,7 +70,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
                 <button
                   key={opt.value}
                   onClick={() => onSelectErrorType(opt.value, selectedPlatform!)}
-                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 bg-white hover:border-red-300 hover:bg-red-50/50 transition-all duration-200 text-left cursor-pointer"
+                  className="w-full flex items-center gap-3 p-4 min-h-[44px] rounded-xl border border-gray-200 bg-white hover:border-red-300 hover:bg-red-50/50 transition-all duration-200 text-left cursor-pointer"
                 >
                   <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                     <span className="text-red-600 text-body-small font-bold">!</span>
@@ -86,7 +86,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
         ) : (
           <>
             <p className="text-body-base text-gray-500 mb-4">Connect your social media accounts to automate content publishing.</p>
-            <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
               {platformItems.map(({ platform, disabled, message, count, maxDisplay }) => {
                 const config = platformConfig[platform];
                 const Icon = config.icon;

@@ -68,8 +68,97 @@ export const AccountRow = forwardRef<HTMLDivElement, AccountRowProps>(function A
           isHighlighted ? 'border border-nitra-highlight-border' : ''
         }`}
       />
+      {/* 行動版：卡片佈局 */}
+      <div className={`md:hidden relative z-10 p-4 transition-colors duration-200 cursor-pointer ${highlightBg} shadow-none rounded-md`}>
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            <div className={`w-10 h-10 rounded-full ${
+              layoutStyle === 'new' 
+                ? 'bg-nitra-primary/10 text-nitra-primary' 
+                : 'bg-gray-200 text-gray-700'
+            } flex items-center justify-center text-body-small font-bold flex-shrink-0`}>
+              {account.accountName.substring(0, 2).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="text-body-base font-medium text-gray-900 truncate group-hover:text-nitra-primary transition-colors duration-200">{account.accountName}</div>
+                {platform === 'instagram' && account.isPrimary && (
+                  <span className="inline-flex items-center px-2 py-0 rounded-full text-detail font-medium bg-nitra-primary text-white flex-shrink-0">
+                    Primary
+                  </span>
+                )}
+              </div>
+              <div className="text-body-small text-gray-400 truncate">{account.accountHandle}</div>
+            </div>
+          </div>
+          <ActionMenu
+            trigger={
+              <span className="inline-flex p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 min-h-[44px] min-w-[44px] items-center justify-center">
+                <MoreHorizontal className="w-4 h-4 text-gray-600 hover:text-nitra-primary transition-colors duration-200" />
+              </span>
+            }
+            platform={platform}
+            accountHandle={account.accountHandle}
+            isPrimary={account.isPrimary}
+            isExpired={account.status === 'expired'}
+            onDisconnect={onDisconnectRequest}
+            onReconnect={onReconnect}
+            onSetPrimary={platform === 'instagram' && !singleInstagram ? () => onTogglePrimary(account.id) : undefined}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1.5">
+            {account.status === 'verified' ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-nitra-success" />
+                <span className="text-body-base font-medium text-nitra-success">Connected</span>
+              </>
+            ) : (
+              <>
+                <XCircle className="w-4 h-4 text-red-600" />
+                <span className="text-body-base font-medium text-red-600">Expired</span>
+              </>
+            )}
+            <span className="text-body-small text-gray-400 ml-auto">{account.lastSynced || '-'}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-gray-400" />
+            <span className="text-body-base font-medium text-gray-900">
+              {account.followers 
+                ? account.followers >= 1000000 
+                  ? (account.followers / 1000000).toFixed(1) + 'M'
+                  : account.followers >= 1000 
+                  ? (account.followers / 1000).toFixed(1) + 'K'
+                  : account.followers.toLocaleString()
+                : '-'}
+            </span>
+            {account.status === 'expired' && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); handleReconnect(); }}
+                disabled={reconnecting}
+                className={`ml-auto px-3 py-1.5 min-h-[44px] text-body-small font-medium ${
+                  layoutStyle === 'new'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'text-red-600 border border-red-300 hover:bg-red-50'
+                } rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5 disabled:opacity-70`}
+                title="Reconnect account"
+                aria-label="Reconnect account"
+              >
+                {reconnecting ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-3.5 h-3.5" />
+                )}
+                {reconnecting ? 'Reconnecting...' : 'Reconnect'}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 桌面版：表格佈局 */}
       <div
-        className={`relative z-10 grid grid-cols-12 gap-6 py-3 transition-colors duration-200 cursor-pointer ${highlightBg} shadow-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
+        className={`hidden md:grid relative z-10 grid-cols-12 gap-6 py-3 transition-colors duration-200 cursor-pointer ${highlightBg} shadow-none ${layoutStyle === 'new' ? 'rounded-md' : 'rounded-none'}`}
       >
         {/* 垂直虛線 - 從開合箭頭下方延伸 - 只在 current 版型顯示 */}
         {layoutStyle !== 'new' && (
