@@ -361,7 +361,7 @@ export default function SocialAccountsSettings() {
                 <input
                   id="search"
                   type="text"
-                  placeholder="Search accounts..."
+                  placeholder="Search..."
                   className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-200/80 rounded-lg text-body-base focus:outline-none focus:ring-2 focus:ring-nitra-primary/30 focus:border-nitra-primary transition-all duration-200 hover:border-gray-300"
                 />
               </div>
