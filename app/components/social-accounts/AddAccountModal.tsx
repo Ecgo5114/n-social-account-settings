@@ -1,11 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, ChevronLeft } from 'lucide-react';
+import { X, ChevronLeft, AlertCircle } from 'lucide-react';
 import { platformConfig } from '@/app/constants/platform-config';
 import { ADD_ACCOUNT_ERROR_OPTIONS } from '@/app/constants/add-account-errors';
 import type { Platform } from '@/app/types/social-accounts';
 import type { AddAccountErrorType } from '@/app/constants/add-account-errors';
+
+/** 在選擇平台步驟顯示的錯誤（Simulate error 時不關閉彈窗、改顯示此 alert） */
+export type DisplayErrorInModal = {
+  platform: Platform;
+  label: string;
+  message: string;
+};
 
 interface AddAccountModalProps {
   isOpen: boolean;
@@ -18,15 +25,23 @@ interface AddAccountModalProps {
   /** 新增帳號錯誤情境：先選平台，再選模擬錯誤 */
   isErrorDemoMode?: boolean;
   onSelectErrorType?: (errorType: AddAccountErrorType, platform: Platform) => void;
+  /** 在選擇平台步驟顯示的錯誤 alert（標題為 [平台] connect failed，內文為 message） */
+  displayError?: DisplayErrorInModal | null;
+  /** 使用者再次選擇平台時清除 displayError（僅在 isErrorDemoMode 時使用） */
+  onPlatformSelected?: () => void;
 }
 
 export function AddAccountModal(props: AddAccountModalProps) {
-  const { isOpen, onClose, onSelectPlatform, platforms: platformsProp, getAccountCount, isErrorDemoMode, onSelectErrorType } = props;
+  const { isOpen, onClose, onSelectPlatform, platforms: platformsProp, getAccountCount, isErrorDemoMode, onSelectErrorType, displayError, onPlatformSelected } = props;
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
 
   useEffect(() => {
     if (isOpen) setSelectedPlatform(null);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (displayError) setSelectedPlatform(null);
+  }, [displayError]);
 
   if (!isOpen) return null;
 
@@ -41,7 +56,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
     return { platform, disabled, message, count, maxDisplay };
   });
 
-  const showErrorStep = isErrorDemoMode && onSelectErrorType && selectedPlatform !== null;
+  const showErrorStep = isErrorDemoMode && onSelectErrorType && selectedPlatform !== null && !displayError;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 md:p-0" role="dialog" aria-modal="true" aria-labelledby="add-account-modal-title" onClick={onClose}>
@@ -85,6 +100,19 @@ export function AddAccountModal(props: AddAccountModalProps) {
           </>
         ) : (
           <>
+            {displayError && (
+              <div className="mb-4 flex items-start gap-3 p-4 rounded-xl border border-red-200 bg-red-50/80" role="alert">
+                <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-5 h-5 text-red-600" aria-hidden="true" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-red-800">
+                    {platformConfig[displayError.platform].name} connection failed
+                  </div>
+                  <div className="text-body-base text-red-700 mt-0.5">{displayError.message}</div>
+                </div>
+              </div>
+            )}
             <p className="text-body-base text-gray-500 mb-4">Connect your social media accounts to automate content publishing.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
               {platformItems.map(({ platform, disabled, message, count, maxDisplay }) => {
@@ -93,6 +121,7 @@ export function AddAccountModal(props: AddAccountModalProps) {
                 const handleClick = () => {
                   if (disabled) return;
                   if (isErrorDemoMode && onSelectErrorType) {
+                    onPlatformSelected?.();
                     setSelectedPlatform(platform);
                   } else {
                     onSelectPlatform(platform);

@@ -64,6 +64,12 @@ export default function SocialAccountsSettings() {
   const [toastAutoHideMs, setToastAutoHideMs] = useState<number | null>(null);
   const [highlightedAccountId, setHighlightedAccountId] = useState<string | null>(null);
   const accountRowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  /** Simulate error：在選擇平台彈窗內顯示的錯誤（不關閉彈窗、不用 toast） */
+  const [addAccountModalError, setAddAccountModalError] = useState<{
+    platform: Platform;
+    label: string;
+    message: string;
+  } | null>(null);
 
   const showToast = useCallback((message: string, variant: 'success' | 'error', autoHideMs: number) => {
     setToastMessage(message);
@@ -88,12 +94,10 @@ export default function SocialAccountsSettings() {
     }
   }, [accountToDisconnect, deleteAccount, showToast]);
 
-  // 新增帳號錯誤情境：選擇錯誤類型 → 模擬串聯 → 回到 Add Account 步驟一 + 錯誤 toast
-  // 例外：「帳號已存在」→ 關閉彈窗、下滑並高亮重複帳號、顯示 toast（不重開彈窗）
-  const handleSelectErrorType = useCallback(async (errorType: AddAccountErrorType, platform: Platform) => {
+  // 新增帳號錯誤情境：選擇錯誤類型 → 回到選擇平台步驟並在彈窗內顯示 alert（不用 toast）
+  const handleSelectErrorType = useCallback((errorType: AddAccountErrorType, platform: Platform) => {
     const opt = ADD_ACCOUNT_ERROR_OPTIONS.find((o) => o.value === errorType);
     if (!opt) return;
-    setShowAddModal(false);
 
     if (errorType === 'account-already-exists') {
       const duplicateAccount = getAccountsByPlatform(platform)[0];
@@ -105,16 +109,11 @@ export default function SocialAccountsSettings() {
         }, 150);
         setTimeout(() => setHighlightedAccountId(null), 3000);
       }
-      showToast(opt.message, 'error', 5000);
-      return;
     }
 
-    setConnectingPlatform(platform);
-    await new Promise((r) => setTimeout(r, 1500));
-    setConnectingPlatform(null);
-    setShowAddModal(true); // 回到 Add Account 彈窗步驟一，讓使用者可重新選擇
-    showToast(opt.message, 'error', 5000);
-  }, [showToast, getAccountsByPlatform, expandPlatform]);
+    setAddAccountModalError({ platform, label: opt.label, message: opt.message });
+    // 不關閉彈窗、不顯示 toast；AddAccountModal 會顯示選擇平台 + alert
+  }, [getAccountsByPlatform, expandPlatform]);
 
   // 選擇平台後：模擬串聯（2 秒）→ 新增帳號 → 成功反饋
   const handleSelectPlatform = useCallback(async (platform: Platform) => {
@@ -675,12 +674,17 @@ export default function SocialAccountsSettings() {
       {/* Add Account Modal */}
       <AddAccountModal
         isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
+        onClose={() => {
+          setShowAddModal(false);
+          setAddAccountModalError(null);
+        }}
         onSelectPlatform={handlePlatformClick}
         platforms={platforms}
         getAccountCount={(p) => getAccountsByPlatform(p).length}
         isErrorDemoMode={demoScenario === 'add-account-error'}
         onSelectErrorType={handleSelectErrorType}
+        displayError={addAccountModalError}
+        onPlatformSelected={demoScenario === 'add-account-error' ? () => setAddAccountModalError(null) : undefined}
       />
 
       {/* OAuth 模擬彈窗 - Twitter / LinkedIn / Instagram */}

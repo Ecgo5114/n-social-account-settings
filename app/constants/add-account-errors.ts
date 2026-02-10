@@ -17,37 +17,37 @@ export const ADD_ACCOUNT_ERROR_OPTIONS: Array<{
 }> = [
   {
     value: 'auth-cancelled',
-    label: '授權取消',
-    message: 'Connection cancelled. You closed the authorization window before completing the process. Please try again.',
+    label: 'Authorization cancelled',
+    message: 'The connection was cancelled before completion. Try connecting again to continue.',
   },
   {
     value: 'account-already-exists',
-    label: '帳號已存在',
-    message: 'This account is already connected. We\'ve highlighted it for you.',
+    label: 'Account already connected',
+    message: 'This account is linked to your workspace. We\'ve highlighted it in the list below.',
   },
   {
     value: 'account-limit',
-    label: '帳號達上限',
-    message: 'Account limit reached. Remove an existing account to add a new one.',
+    label: 'Account limit reached',
+    message: 'Disconnect an existing account to free a slot, then add this one.',
   },
   {
     value: 'network-timeout',
-    label: '連線逾時',
-    message: 'Connection timed out. Please check your network and try again.',
+    label: 'Connection timed out',
+    message: 'The request took too long. Check your internet connection and try again.',
   },
   {
     value: 'platform-specific',
-    label: '平台限制',
-    message: 'This account is already connected to another workspace. Disconnect it first to add here.',
+    label: 'Account linked elsewhere',
+    message: 'This account is connected to another workspace. Disconnect it there first, then add it here.',
   },
   {
     value: 'app-config',
-    label: '應用程式錯誤',
-    message: "Something went wrong on our end. We're working on it. Please try again in a few minutes.",
+    label: 'Something went wrong',
+    message: 'We\'re having a temporary issue. Please try again in a few minutes.',
   },
   {
     value: 'general',
-    label: '一般錯誤',
-    message: 'Connection failed. Please try again or contact support if the problem persists.',
+    label: 'Connection failed',
+    message: 'We couldn\'t complete the connection. Try again—if it persists, contact support.',
   },
 ];
